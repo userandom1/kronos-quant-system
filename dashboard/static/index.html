@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kronos Quant System</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/estilos.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@perspective-dev/viewer@5.5.0/dist/css/themes.css"
+    >
+
+    <script
+        type="module"
+        src="/static/app.js"
+    ></script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="marca">
+            <div class="marca-icono">
+                K
+            </div>
+
+            <div>
+                <div class="marca-titulo">
+                    KRONOS
+                </div>
+
+                <div class="marca-subtitulo">
+                    QUANT SYSTEM
+                </div>
+            </div>
+        </div>
+
+        <nav class="menu">
+
+            <button
+                class="menu-item activo"
+                data-panel="overview"
+            >
+                Overview
+            </button>
+
+            <button
+                class="menu-item"
+                data-panel="market"
+            >
+                Market
+            </button>
+
+            <button
+                class="menu-item"
+                data-panel="portfolio"
+            >
+                Portfolio
+            </button>
+
+            <button
+                class="menu-item"
+                data-panel="options"
+            >
+                Options
+            </button>
+
+            <button
+                class="menu-item"
+                data-panel="risk"
+            >
+                Risk
+            </button>
+
+            <button
+                class="menu-item"
+                data-panel="system"
+            >
+                System
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="estado-linea">
+                <span
+                    id="estado-punto"
+                    class="estado-punto"
+                ></span>
+
+                <span id="estado-sistema">
+                    Cargando...
+                </span>
+            </div>
+
+            <div
+                id="ultima-actualizacion"
+                class="ultima-actualizacion"
+            >
+                —
+            </div>
+
+        </div>
+
+    </aside>
+
+    <main class="contenido">
+
+        <header class="cabecera">
+
+            <div>
+                <h1 id="titulo-panel">
+                    Overview
+                </h1>
+
+                <div class="cabecera-subtitulo">
+                    Institutional Quantitative Market Monitor
+                </div>
+            </div>
+
+            <div class="cabecera-derecha">
+
+                <div class="ticker-principal">
+                    QQQ
+                </div>
+
+                <button
+                    id="boton-recargar"
+                    class="boton"
+                >
+                    Actualizar
+                </button>
+
+            </div>
+
+        </header>
+
+        <section
+            id="panel-overview"
+            class="panel activo"
+        >
+
+            <div class="grid-kpi">
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        Market Regime
+                    </div>
+
+                    <div
+                        id="kpi-regimen"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-regimen-score"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        Options Flow
+                    </div>
+
+                    <div
+                        id="kpi-flow"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-flow-balance"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        Gamma Flip
+                    </div>
+
+                    <div
+                        id="kpi-gamma-flip"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-spot"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        Portfolio Vol
+                    </div>
+
+                    <div
+                        id="kpi-vol"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-beta"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        VaR 95%
+                    </div>
+
+                    <div
+                        id="kpi-var"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-cvar"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+                <article class="kpi">
+                    <div class="kpi-etiqueta">
+                        Max Drawdown
+                    </div>
+
+                    <div
+                        id="kpi-drawdown"
+                        class="kpi-valor"
+                    >
+                        —
+                    </div>
+
+                    <div
+                        id="kpi-neff"
+                        class="kpi-secundario"
+                    >
+                        —
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="grid-doble">
+
+                <article class="tarjeta">
+
+                    <div class="tarjeta-cabecera">
+                        Portfolio actual
+                    </div>
+
+                    <div
+                        id="lista-pesos"
+                        class="lista-pesos"
+                    ></div>
+
+                </article>
+
+                <article class="tarjeta">
+
+                    <div class="tarjeta-cabecera">
+                        Dealer positioning
+                    </div>
+
+                    <div class="metricas-lista">
+
+                        <div class="metrica-linea">
+                            <span>GEX</span>
+                            <strong id="overview-gex">—</strong>
+                        </div>
+
+                        <div class="metrica-linea">
+                            <span>DEX</span>
+                            <strong id="overview-dex">—</strong>
+                        </div>
+
+                        <div class="metrica-linea">
+                            <span>+Gamma Node</span>
+                            <strong id="overview-gamma-pos">—</strong>
+                        </div>
+
+                        <div class="metrica-linea">
+                            <span>-Gamma Node</span>
+                            <strong id="overview-gamma-neg">—</strong>
+                        </div>
+
+                        <div class="metrica-linea">
+                            <span>Flow Gamma Node</span>
+                            <strong id="overview-flow-gamma">—</strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <section
+            id="panel-market"
+            class="panel"
+        >
+
+            <div class="selector-tabla">
+
+                <button
+                    class="subnav activo"
+                    data-dataset="market_regime_v2"
+                >
+                    Regime V2
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="senales_v2"
+                >
+                    Signals V2
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="market_regime_v1"
+                >
+                    Relative Market
+                </button>
+
+            </div>
+
+            <div class="tarjeta tabla-tarjeta">
+                <perspective-viewer
+                    id="viewer-market"
+                    theme="Pro Dark"
+                ></perspective-viewer>
+            </div>
+
+        </section>
+
+        <section
+            id="panel-portfolio"
+            class="panel"
+        >
+
+            <div class="selector-tabla">
+
+                <button
+                    class="subnav activo"
+                    data-dataset="portfolio_v2_pesos"
+                >
+                    Pesos
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="portfolio_v2_alpha"
+                >
+                    Alpha
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="portfolio_v2_metricas"
+                >
+                    Métricas
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="portfolio_v2_correlaciones"
+                >
+                    Correlaciones
+                </button>
+
+            </div>
+
+            <div class="tarjeta tabla-tarjeta">
+                <perspective-viewer
+                    id="viewer-portfolio"
+                    theme="Pro Dark"
+                ></perspective-viewer>
+            </div>
+
+        </section>
+
+        <section
+            id="panel-options"
+            class="panel"
+        >
+
+            <div class="selector-tabla">
+
+                <button
+                    class="subnav activo"
+                    data-dataset="options_flow_v2"
+                >
+                    Flow V2
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="options_flow_strike"
+                >
+                    Flow por strike
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="dealer_v4_perfil"
+                >
+                    Gamma Profile
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="dealer_v4_strike"
+                >
+                    Dealer Flow
+                </button>
+
+            </div>
+
+            <div class="tarjeta tabla-tarjeta">
+                <perspective-viewer
+                    id="viewer-options"
+                    theme="Pro Dark"
+                ></perspective-viewer>
+            </div>
+
+        </section>
+
+        <section
+            id="panel-risk"
+            class="panel"
+        >
+
+            <div class="selector-tabla">
+
+                <button
+                    class="subnav activo"
+                    data-dataset="risk_contribucion"
+                >
+                    Risk Contribution
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="risk_component_var"
+                >
+                    Component VaR
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="risk_stress"
+                >
+                    Stress Test
+                </button>
+
+                <button
+                    class="subnav"
+                    data-dataset="risk_stress_historico"
+                >
+                    Historical Stress
+                </button>
+
+            </div>
+
+            <div class="tarjeta tabla-tarjeta">
+                <perspective-viewer
+                    id="viewer-risk"
+                    theme="Pro Dark"
+                ></perspective-viewer>
+            </div>
+
+        </section>
+
+        <section
+            id="panel-system"
+            class="panel"
+        >
+
+            <div class="tarjeta">
+
+                <div class="tarjeta-cabecera">
+                    Estado de datasets
+                </div>
+
+                <div
+                    id="estado-datasets"
+                    class="estado-datasets"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

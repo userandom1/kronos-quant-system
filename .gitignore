@@ -74,3 +74,34 @@ venv.bak/
 temp/
 tmp/
 .python-version
+# ============================================================
+# Kronos Quant System - archivos locales y regenerables
+# ============================================================
+
+# Cachés de modelos y Hugging Face
+.cache/
+
+# Resultados generados por los motores
+resultados/
+
+# Datos descargados o regenerables
+data/
+
+# Snapshots y salidas temporales
+snapshots/
+
+
+# Cobertura y herramientas de calidad
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Archivos locales de ejecución
+*.pid
+
+# Backups locales
+*.bak
+*.backup
