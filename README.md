@@ -63,3 +63,5 @@ Options Flow V2
 Dealer Engine V4
       ↓
 Dashboard
+
+![Descripción de la imagen](images/diagram.png)
