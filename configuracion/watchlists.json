@@ -1,0 +1,24 @@
+{
+  "PRINCIPAL": [
+    "QQQ",
+    "SPY",
+    "AAPL",
+    "NVDA",
+    "GLD",
+    "TLT"
+  ],
+  "MACRO": [
+    "SPY",
+    "QQQ",
+    "IWM",
+    "TLT",
+    "GLD",
+    "HYG",
+    "^VIX"
+  ],
+  "CRIPTO": [
+    "BTC-USD",
+    "ETH-USD",
+    "SOL-USD"
+  ]
+}

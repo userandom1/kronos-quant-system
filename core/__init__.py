@@ -1,0 +1,1 @@
+"""Núcleo común de la plataforma cuantitativa."""

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Quant Platform V2</title>
+    <link
+        rel="stylesheet"
+        href="/static/estilos.css"
+    >
+</head>
+
+<body>
+    <aside class="barra">
+        <div class="marca">
+            QUANT
+            <span>PLATFORM</span>
+        </div>
+
+        <button
+            class="nav activo"
+            data-vista="activo"
+        >
+            Activo
+        </button>
+
+        <button
+            class="nav"
+            data-vista="universo"
+        >
+            Universo
+        </button>
+
+        <button
+            class="nav"
+            data-vista="watchlist"
+        >
+            Watchlists
+        </button>
+
+        <button
+            class="nav"
+            data-vista="sistema"
+        >
+            Sistema
+        </button>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <p class="subtitulo">
+                    MULTI-ASSET QUANT INTELLIGENCE
+                </p>
+
+                <h1>
+                    Terminal V2
+                </h1>
+            </div>
+
+            <div
+                id="estadoSistema"
+                class="estado"
+            >
+                comprobando...
+            </div>
+        </header>
+
+        <section
+            id="vista-activo"
+            class="vista"
+        >
+            <div class="buscador">
+                <input
+                    id="simbolo"
+                    value="AAPL"
+                    placeholder="Ticker"
+                >
+
+                <select id="horizonte">
+                    <option value="5">
+                        5 sesiones
+                    </option>
+
+                    <option
+                        value="20"
+                        selected
+                    >
+                        20 sesiones
+                    </option>
+
+                    <option value="60">
+                        60 sesiones
+                    </option>
+                </select>
+
+                <button
+                    id="analizarActivo"
+                    class="principal"
+                >
+                    Analizar
+                </button>
+            </div>
+
+            <div
+                id="resultadoActivo"
+                class="panel-grande"
+            ></div>
+        </section>
+
+        <section
+            id="vista-universo"
+            class="vista oculto"
+        >
+            <div class="buscador">
+                <select id="universo">
+                    <option>US_TECH</option>
+                    <option>ETF_GLOBALES</option>
+                    <option>MACRO</option>
+                    <option>CRIPTO</option>
+                    <option>FOREX</option>
+                    <option>FUTUROS</option>
+                </select>
+
+                <button
+                    id="analizarUniverso"
+                    class="principal"
+                >
+                    Analizar universo
+                </button>
+            </div>
+
+            <div
+                id="resultadoUniverso"
+                class="panel-grande"
+            ></div>
+        </section>
+
+        <section
+            id="vista-watchlist"
+            class="vista oculto"
+        >
+            <div
+                id="listaWatchlists"
+                class="buscador"
+            ></div>
+
+            <div
+                id="resultadoWatchlist"
+                class="panel-grande"
+            ></div>
+        </section>
+
+        <section
+            id="vista-sistema"
+            class="vista oculto"
+        >
+            <div
+                id="resultadoSistema"
+                class="panel-grande"
+            ></div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
