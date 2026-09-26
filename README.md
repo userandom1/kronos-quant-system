@@ -17,13 +17,13 @@
 ![Scenario Spot Time QQQ](docs/images/scenario-spot-time-qqq.png)
 
 # how to use 
--Ejecutar pipeline completo
+-Ejecutar pipeline completo:
   python -m motor_sistema.release_v1
 
--Ejecutar pipeline y abrir dashboard
+-Ejecutar pipeline y abrir dashboard:
   python -m motor_sistema.release_v1 --dashboard
 
--Abrir únicamente el dashboard
+-Abrir únicamente el dashboard:
   python -m dashboard.servidor_perspective
 
 Dashboard:
