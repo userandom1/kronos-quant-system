@@ -1,121 +1,98 @@
-# Kronos Quant System
+# Kronos Quant System — V1
 
-[![Version](https://img.shields.io/badge/version-v2.0.0-blue.svg)]()
-[![Python](https://img.shields.io/badge/python-3.12+-green.svg)]()
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![Multi-Asset](https://img.shields.io/badge/coverage-multi--asset-purple.svg)]()
-[![License](https://img.shields.io/badge/license-private-lightgrey.svg)]()
+![Versión](https://img.shields.io/badge/versión-v1.0.0-blue)
+![Python](https://img.shields.io/badge/Python-3.12+-green)
+![Estado](https://img.shields.io/badge/estado-estable-success)
+![Quant](https://img.shields.io/badge/Quant-Research-purple)
+![Opciones](https://img.shields.io/badge/Options-Analytics-orange)
 
-A professional **multi-asset quantitative research and market intelligence platform** built on top of Kronos as a forecasting tool, extended into a broader system for:
+Plataforma personal de **investigación cuantitativa, análisis de mercado, opciones, posicionamiento dealer, portfolio y riesgo** desarrollada en Python.
 
-- **Market regime analysis**
-- **Forecasting**
-- **Options and dealer positioning analysis**
-- **Portfolio construction**
-- **Risk analytics**
-- **Deep research workflows**
-- **Interactive dashboarding**
-
-> Kronos is used here as **one tool inside the system**, not as the full product itself.
+La V1 representa la primera versión completa y estable del sistema, construida principalmente alrededor de **QQQ y un universo multi-activo de referencia**, con integración de señales, modelos, opciones, riesgo, portfolio y visualización.
 
 ---
 
-## Preview
+## Vista previa
 
-### Dashboard V2
-![Dashboard V2](docs/images/dashboard-v2.png)
+### Dashboard V1
 
-### Deep Research
-![Deep Research](docs/images/deep-research-qqq.png)
+![Dashboard V1](docs/images/dashboard-v1.png)
 
-### Options 2D / 3D Analytics
-![Options 3D](docs/images/options-3d.png)
+### Deep Research V1
 
----
+![Deep Research V1](docs/images/deep-research-v1.png)
 
-## What this project does
+### Delta Call — Superficie 3D
 
-Kronos Quant System is designed to analyze **any major asset class** instead of remaining limited to a single ETF or ticker.
+![Delta Call 3D](docs/images/delta-call-superficie3d.png)
 
-It supports research and monitoring across:
+### Gamma Call — Superficie 3D
 
-- **ETFs**
-- **Stocks**
-- **Indexes**
-- **Futures**
-- **Forex**
-- **Crypto**
-- **Options-capable assets**
+![Gamma Call 3D](docs/images/gamma-call-superficie3d.png)
 
-Core goal:
+### Vanna Call — Superficie 3D
 
-> Build a practical quantitative platform that helps analyze market context, forecast possible scenarios, inspect options structure, evaluate dealer positioning, construct portfolios, and run asset-level deep research.
+![Vanna Call 3D](docs/images/vanna-por-punto-IV-call-3d.png)
 
 ---
 
-## Core Modules
+## Objetivo
 
-### 1. Market Engine
-- Universal asset analysis
-- Market regime classification
-- Relative strength comparison
-- Composite signals
-- Forecast engine
-- Cross-asset analysis
+El objetivo de Kronos Quant System es centralizar en una única plataforma distintas capas de análisis cuantitativo:
 
-### 2. Options Engine
-- Options chain analysis
-- Greeks analysis
-- Options flow analysis
+- Régimen de mercado
+- Señales cuantitativas
+- Forecasting
+- Volatilidad
+- Opciones
+- Greeks
+- Options Flow
 - Dealer positioning
-- Call wall / put wall
-- Gamma exposure / Delta exposure / Vanna / Charm
-- 2D and 3D visualizations
-
-### 3. Portfolio Engine
-- Portfolio construction
-- Universal optimizer
-- Signal-tilted allocations
-- Portfolio metrics
-- Correlations
-- Rebalancing logic
-
-### 4. Risk Engine
-- VaR / CVaR
-- Drawdown analysis
+- Gamma Exposure
+- Delta Exposure
+- Vanna
+- Charm
+- Portfolio optimization
+- Risk management
 - Stress testing
-- Risk decomposition
-- Position and portfolio risk views
+- Visualización 2D y 3D
 
-### 5. System / Orchestration Layer
-- Release workflows
-- Universal orchestration
-- Watchlists
-- API endpoints
-- Dashboard integration
-- Deep research execution
+La plataforma está diseñada principalmente como herramienta de:
+
+- investigación;
+- experimentación;
+- aprendizaje;
+- análisis cuantitativo;
+- desarrollo de estrategias.
 
 ---
 
-## Project Structure
+# Arquitectura
 
-```text
-kronos/
-├── configuracion/
-├── core/
-│   ├── activos/
-│   ├── datos/
-│   └── modelos/
-├── dashboard/
-├── dashboard_v2/
-├── herramientas/
-├── motor_mercado/
-├── motor_opciones/
-├── motor_portfolio/
-├── motor_riesgo/
-├── motor_sistema/
-├── motor_validacion/
-├── pruebas/
-├── resultados/
-└── docs/
-    └── images/
+```mermaid
+flowchart TD
+
+    DATA[Datos de mercado] --> MARKET[Motor de Mercado]
+    DATA --> OPTIONS[Motor de Opciones]
+
+    MARKET --> SIGNALS[Señales]
+    MARKET --> FORECAST[Forecasting]
+    MARKET --> REGIME[Régimen de Mercado]
+
+    OPTIONS --> GREEKS[Greeks]
+    OPTIONS --> FLOW[Options Flow]
+    OPTIONS --> DEALER[Dealer Engine]
+
+    GREEKS --> DEALER
+    FLOW --> DEALER
+
+    SIGNALS --> PORTFOLIO[Portfolio Engine]
+    REGIME --> PORTFOLIO
+
+    PORTFOLIO --> RISK[Risk Engine]
+
+    FORECAST --> SYSTEM[Motor del Sistema]
+    DEALER --> SYSTEM
+    RISK --> SYSTEM
+
+    SYSTEM --> DASHBOARD[Dashboard]
