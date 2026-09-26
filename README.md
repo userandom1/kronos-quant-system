@@ -1,3 +1,21 @@
+## Vista previa
+
+### Dashboard V2
+
+![Dashboard V2](docs/images/dashboard-v2.png)
+
+### Deep Research QQQ
+
+![Deep Research QQQ](docs/images/deep-research-qqq.png)
+
+### Gamma Surface 3D
+
+![Gamma Surface 3D](docs/images/gamma-surface-3d.png)
+
+### Scenario Engine — Spot × Tiempo × P&L
+
+![Scenario Spot Time QQQ](docs/images/scenario-spot-time-qqq.png)
+
 # how to use 
 -Ejecutar pipeline completo
   python -m motor_sistema.release_v1
