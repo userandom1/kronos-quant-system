@@ -66,6 +66,8 @@ def aplicar_griegas(
 ) -> pd.DataFrame:
     """Calcula Greeks universales sobre una cadena."""
 
+    if not np.isfinite(spot) or spot <= 0:
+        raise ValueError("Spot debe ser positivo y finito.")
     resultado = cadena.copy()
 
     resultado["strike"] = pd.to_numeric(
@@ -86,7 +88,9 @@ def aplicar_griegas(
     resultado = resultado[
         (resultado["strike"] > 0)
         & (resultado["iv"] > 0)
-        & (resultado["dte"] >= 0)
+        & (resultado["dte"] > 0)
+        & np.isfinite(resultado[["strike", "iv", "dte"]]).all(axis=1)
+        & resultado["tipo_opcion"].astype(str).str.upper().isin(["CALL", "PUT"])
     ].copy()
 
     strike = resultado[
@@ -101,15 +105,7 @@ def aplicar_griegas(
         dtype=float
     )
 
-    tiempo = np.maximum(
-        resultado[
-            "dte"
-        ].to_numpy(
-            dtype=float
-        )
-        / DIAS_ANO,
-        1.0 / DIAS_ANO,
-    )
+    tiempo = resultado["dte"].to_numpy(dtype=float) / DIAS_ANO
 
     tipo = resultado[
         "tipo_opcion"
@@ -231,69 +227,20 @@ def aplicar_griegas(
         / DIAS_ANO
     )
 
-    # Vanna aproximada mediante shock central de +/-1 punto de IV.
-    shock_iv = 0.01
-
-    vol_mas = (
-        volatilidad
-        + shock_iv
-    )
-
-    vol_menos = np.maximum(
-        volatilidad
-        - shock_iv,
-        0.0001,
-    )
-
-    delta_vol_mas = calcular_delta(
-        spot,
-        strike,
-        tiempo,
-        vol_mas,
-        tipo,
-        tipo_interes,
-        dividendo,
-    )
-
-    delta_vol_menos = calcular_delta(
-        spot,
-        strike,
-        tiempo,
-        vol_menos,
-        tipo,
-        tipo_interes,
-        dividendo,
-    )
-
-    vanna_1pt = (
-        delta_vol_mas
-        - delta_vol_menos
-    ) / 2.0
+    # Derivada analítica de Delta respecto a IV, por un punto porcentual.
+    vanna_1pt = -descuento_q * pdf_d1 * d2 / volatilidad / 100.0
 
     # Charm: cambio estimado de Delta tras un día.
-    tiempo_manana = np.maximum(
-        tiempo
-        - 1.0 / DIAS_ANO,
-        1.0 / (
-            DIAS_ANO
-            * 24.0
-        ),
-    )
-
+    tiempo_manana = np.maximum(tiempo - 1.0 / DIAS_ANO, 0.0)
+    # Al expirar, Delta converge al límite de payoff (0.5 en el strike).
     delta_manana = calcular_delta(
-        spot,
-        strike,
-        tiempo_manana,
-        volatilidad,
-        tipo,
-        tipo_interes,
-        dividendo,
+        spot, strike, np.maximum(tiempo_manana, 1e-12), volatilidad,
+        tipo, tipo_interes, dividendo,
     )
-
-    charm_dia = (
-        delta_manana
-        - delta
-    )
+    delta_call_terminal = np.where(spot > strike, 1.0, np.where(spot < strike, 0.0, 0.5))
+    delta_terminal = np.where(tipo == "CALL", delta_call_terminal, delta_call_terminal - 1.0)
+    delta_manana = np.where(tiempo_manana == 0, delta_terminal, delta_manana)
+    charm_dia = delta_manana - delta
 
     resultado[
         "delta"

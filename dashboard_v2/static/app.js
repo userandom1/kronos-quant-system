@@ -24,11 +24,17 @@ function numero(valor, decimales = 3) {
     return Number(valor).toFixed(decimales);
 }
 
+function escapar(valor) {
+    const nodo = document.createElement("span");
+    nodo.textContent = valor == null ? "-" : String(valor);
+    return nodo.innerHTML;
+}
+
 function tarjeta(nombre, valor) {
     return `
         <div class="tarjeta">
-            <small>${nombre}</small>
-            <strong>${valor}</strong>
+            <small>${escapar(nombre)}</small>
+            <strong>${escapar(valor)}</strong>
         </div>
     `;
 }
@@ -90,9 +96,9 @@ async function cargarHealth() {
                     ${datos.checks.map(
                         (item) => `
                             <tr>
-                                <td>${item.componente}</td>
-                                <td>${item.estado}</td>
-                                <td>${item.detalle}</td>
+                                <td>${escapar(item.componente)}</td>
+                                <td>${escapar(item.estado)}</td>
+                                <td>${escapar(item.detalle)}</td>
                             </tr>
                         `
                     ).join("")}
@@ -104,7 +110,7 @@ async function cargarHealth() {
             "ERROR";
 
         $("resultadoSistema").innerHTML =
-            `<p class="error">${error}</p>`;
+            `<p class="error">${escapar(error)}</p>`;
     }
 }
 
@@ -137,7 +143,11 @@ async function analizarActivo() {
 
         const m = mercado.datos || {};
 
-        let html = `
+        const incidencias = Object.entries(datos.motores)
+            .filter(([, motor]) => !["OK", "NO_COMPATIBLE"].includes(motor.estado))
+            .map(([nombre, motor]) => `<p class="error">${escapar(nombre)}: ${escapar(motor.estado)} — ${escapar(motor.error || JSON.stringify((motor.datos || {}).errores_modelos || (motor.datos || {}).resumen_cadena || {}))}</p>`)
+            .join("");
+        let html = incidencias + `
             <div class="grid">
                 ${tarjeta(
                     "Activo",
@@ -184,7 +194,7 @@ async function analizarActivo() {
 
         if (
             forecast &&
-            forecast.estado === "OK"
+            ["OK", "PARCIAL"].includes(forecast.estado)
         ) {
             const e =
                 forecast.datos.ensemble;
@@ -218,13 +228,14 @@ async function analizarActivo() {
 
         if (
             opciones &&
-            opciones.estado === "OK"
+            ["OK", "PARCIAL"].includes(opciones.estado)
         ) {
             const d =
                 opciones.datos.dealer;
 
             html += `
-                <h3>Opciones / Dealer</h3>
+                <h3>Opciones / Dealer (estimación proxy)</h3>
+                <p>Walls por OI agregado. Convención: calls short, puts long. No son posiciones observadas.</p>
 
                 <div class="grid">
                     ${tarjeta(
@@ -259,11 +270,12 @@ async function analizarActivo() {
         }
 
         $("resultadoActivo").innerHTML =
-            html;
+            html + '<button id="verInforme">Ver último Deep Research guardado</button><div id="informeGuardado"></div>';
+        $("verInforme").addEventListener("click", () => cargarInforme(simbolo));
 
     } catch (error) {
         $("resultadoActivo").innerHTML =
-            `<p class="error">${error}</p>`;
+            `<p class="error">${escapar(error)}</p>`;
     }
 }
 
@@ -285,9 +297,9 @@ function tablaRanking(datos) {
                 ${datos.map(
                     (fila) => `
                         <tr>
-                            <td>${fila.simbolo}</td>
-                            <td>${fila.ranking}</td>
-                            <td>${fila.regimen_global}</td>
+                            <td>${escapar(fila.simbolo)}</td>
+                            <td>${escapar(fila.ranking)}</td>
+                            <td>${escapar(fila.regimen_global)}</td>
                             <td>${numero(
                                 fila.score_relativo
                             )}</td>
@@ -354,7 +366,7 @@ async function analizarUniverso() {
             `;
     } catch (error) {
         $("resultadoUniverso").innerHTML =
-            `<p class="error">${error}</p>`;
+            `<p class="error">${escapar(error)}</p>`;
     }
 }
 
@@ -363,23 +375,15 @@ async function cargarWatchlists() {
         "/api/v2/watchlists"
     );
 
-    $("listaWatchlists").innerHTML =
-        Object.keys(datos)
-            .map(
-                (nombre) => `
-                    <button
-                        class="principal"
-                        onclick="
-                            analizarWatchlist(
-                                '${nombre}'
-                            )
-                        "
-                    >
-                        ${nombre}
-                    </button>
-                `
-            )
-            .join("");
+    const lista = $("listaWatchlists");
+    lista.replaceChildren();
+    Object.keys(datos).forEach(nombre => {
+        const boton = document.createElement("button");
+        boton.className = "principal";
+        boton.textContent = nombre;
+        boton.addEventListener("click", () => analizarWatchlist(nombre));
+        lista.appendChild(boton);
+    });
 }
 
 async function analizarWatchlist(nombre) {
@@ -388,7 +392,7 @@ async function analizarWatchlist(nombre) {
 
     try {
         const datos = await obtenerJson(
-            `/api/v2/watchlist/${nombre}`
+            `/api/v2/watchlist/${encodeURIComponent(nombre)}`
         );
 
         $("resultadoWatchlist").innerHTML =
@@ -422,7 +426,7 @@ async function analizarWatchlist(nombre) {
             `;
     } catch (error) {
         $("resultadoWatchlist").innerHTML =
-            `<p class="error">${error}</p>`;
+            `<p class="error">${escapar(error)}</p>`;
     }
 }
 
@@ -476,5 +480,24 @@ $("analizarUniverso").addEventListener(
 );
 
 cargarHealth();
-cargarWatchlists();
+cargarWatchlists().catch(error => { $("listaWatchlists").textContent = String(error); });
 analizarActivo();
+
+async function cargarInforme(simbolo) {
+    const contenedor = $("informeGuardado");
+    contenedor.textContent = "Leyendo investigación guardada...";
+    try {
+        const informe = await obtenerJson(`/api/v2/informe/${encodeURIComponent(simbolo)}`);
+        const filas = informe.dealer_por_vencimiento || [];
+        contenedor.innerHTML = `<h3>Deep Research ${escapar(informe.ticker)} — ${escapar(informe.estado)}</h3>
+            <p>Snapshot: ${escapar((informe.procedencia || {}).inicio_utc || "No registrada")}. Datos históricos del informe.</p>
+            <table><thead><tr><th>Vencimiento</th><th>GEX 1%</th><th>DEX</th><th>Call Wall</th><th>Put Wall</th><th>Gamma Flip</th></tr></thead><tbody>
+            ${filas.map(f => `<tr><td>${escapar(f.vencimiento)}</td><td>${numero(f.net_gex_1pct, 0)}</td><td>${numero(f.net_dex, 0)}</td><td>${escapar(f.call_wall)}</td><td>${escapar(f.put_wall)}</td><td>${escapar(f.estado_gamma_flip)}: ${escapar((f.gamma_flips || []).join(", "))}</td></tr>`).join("")}
+            </tbody></table>`;
+        const detalle = document.createElement("pre");
+        detalle.textContent = JSON.stringify(informe.estados, null, 2);
+        contenedor.appendChild(detalle);
+    } catch (error) {
+        contenedor.textContent = String(error);
+    }
+}

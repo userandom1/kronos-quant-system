@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -42,8 +42,9 @@ def guardar_snapshot(
         exist_ok=True,
     )
 
-    timestamp = datetime.now().strftime(
-        "%Y%m%d_%H%M%S"
+    captura = datetime.now(timezone.utc)
+    timestamp = captura.strftime(
+        "%Y%m%d_%H%M%S_%f"
     )
 
     archivo = (
@@ -51,6 +52,8 @@ def guardar_snapshot(
         / f"snapshot_{timestamp}.csv"
     )
 
+    cadena = cadena.copy()
+    cadena["capturado_en"] = captura.isoformat()
     cadena.to_csv(
         archivo,
         index=False,

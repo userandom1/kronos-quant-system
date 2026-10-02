@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 import pandas as pd
 
 from core.activos import Activo
+from core.activos.clases_activo import ClaseActivo
 from core.datos import obtener_proveedor
 from motor_mercado.metricas_mercado import (
     beta_correlacion,
@@ -43,6 +46,8 @@ def analizar_activo_universal(
             f"{activo.simbolo}."
         )
 
+    factor_anual = 365 if activo.clase == ClaseActivo.CRYPTO else 252
+    advertencias = []
     retornos = cierre.pct_change()
 
     precio = float(
@@ -80,21 +85,25 @@ def analizar_activo_universal(
     vol20 = volatilidad_anualizada(
         retornos,
         20,
+        factor_anual=factor_anual,
     )
 
     vol60 = volatilidad_anualizada(
         retornos,
         60,
+        factor_anual=factor_anual,
     )
 
     sharpe20 = sharpe_anualizado(
         retornos,
         20,
+        factor_anual=factor_anual,
     )
 
     sharpe60 = sharpe_anualizado(
         retornos,
         60,
+        factor_anual=factor_anual,
     )
 
     dd_actual = drawdown_actual(
@@ -142,10 +151,13 @@ def analizar_activo_universal(
                 )
             )
 
-        except Exception:
-            pass
+        except Exception as error:
+            advertencias.append(f"Benchmark no disponible: {error}")
+            logging.getLogger(__name__).warning("%s", advertencias[-1])
 
     return {
+        "factor_anual": factor_anual,
+        "advertencias": advertencias,
         "simbolo": activo.simbolo,
         "clase": activo.clase.value,
         "mercado": activo.mercado,

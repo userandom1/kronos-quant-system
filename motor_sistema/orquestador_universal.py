@@ -82,8 +82,9 @@ def ejecutar_forecast_engine(
 
         return ResultadoMotor(
             nombre="forecast",
-            estado="OK",
+            estado="PARCIAL" if resultados.attrs.get("errores_modelos") else "OK",
             datos={
+                "errores_modelos": resultados.attrs.get("errores_modelos", {}),
                 "horizonte": horizonte,
                 "ensemble": ensemble,
                 "modelos": modelos,
@@ -128,7 +129,7 @@ def ejecutar_options_engine_sistema(
 
         return ResultadoMotor(
             nombre="opciones",
-            estado="OK",
+            estado="PARCIAL" if resultado.resumen["calidad"]["contratos_rechazados"] else "OK",
             datos={
                 "spot": resultado.spot,
                 "vencimiento": (

@@ -26,6 +26,7 @@ def retorno_periodo(
 def volatilidad_anualizada(
     retornos: pd.Series,
     ventana: int,
+    factor_anual: int = SESIONES_ANUALES,
 ) -> float:
     """Calcula la volatilidad anualizada."""
 
@@ -39,7 +40,7 @@ def volatilidad_anualizada(
     return float(
         muestra.std(ddof=1)
         * np.sqrt(
-            SESIONES_ANUALES
+            factor_anual
         )
     )
 
@@ -47,6 +48,7 @@ def volatilidad_anualizada(
 def sharpe_anualizado(
     retornos: pd.Series,
     ventana: int,
+    factor_anual: int = SESIONES_ANUALES,
 ) -> float:
     """Calcula Sharpe anualizado con rf igual a cero."""
 
@@ -73,7 +75,7 @@ def sharpe_anualizado(
         muestra.mean()
         / desviacion
         * np.sqrt(
-            SESIONES_ANUALES
+            factor_anual
         )
     )
 

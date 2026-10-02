@@ -1,10 +1,17 @@
-numpy
-pandas
-torch>=2.0.0
-
+# Plataforma Quant: versiones directas del entorno verificado.
+# Para CUDA instalar primero torch con el índice cu126; véase README.
+numpy==2.5.3
+pandas==2.2.2
+torch==2.6.0
 einops==0.8.1
 huggingface_hub==0.33.1
 matplotlib==3.9.3
-pandas==2.2.2
 tqdm==4.67.1
 safetensors==0.6.2
+yfinance==1.7.0
+scipy==1.18.1
+skfolio==1.2.8
+plotly==7.0.0
+starlette==0.52.1
+uvicorn==0.53.0
+tzdata==2026.4

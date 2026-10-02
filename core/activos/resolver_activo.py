@@ -3,7 +3,11 @@ from core.activos.clases_activo import ClaseActivo
 from core.activos.modelo_activo import Activo
 
 
+ALIAS_SIMBOLOS = {"SPX": "^GSPC", "NDX": "^NDX", "VIX": "^VIX"}
+
+
 ETF_CONOCIDOS = {
+    "DIA",
     "QQQ",
     "SPY",
     "IWM",
@@ -328,6 +332,7 @@ def resolver_activo(
     """
 
     simbolo = simbolo.strip().upper()
+    simbolo = ALIAS_SIMBOLOS.get(simbolo, simbolo)
 
     if not simbolo:
         raise ValueError(

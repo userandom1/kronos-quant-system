@@ -182,29 +182,17 @@ def agregar_por_strike(
     return agregado
 
 
-def agregar_por_vencimiento(
-    datos: pd.DataFrame,
-) -> pd.DataFrame:
-    """Agrega exposures por vencimiento."""
-
+def agregar_por_vencimiento(datos: pd.DataFrame) -> pd.DataFrame:
+    """Agrega por fecha; DTE es una medida temporal, no una clave de agrupación."""
     columnas = [
-        "dex_dealer",
-        "gex_1pct_dealer",
-        "theta_exposure_dia_dealer",
-        "vega_exposure_1pt_dealer",
-        "vanna_exposure_1pt_dealer",
+        "dex_dealer", "gex_1pct_dealer", "theta_exposure_dia_dealer",
+        "vega_exposure_1pt_dealer", "vanna_exposure_1pt_dealer",
         "charm_exposure_dia_dealer",
     ]
-
-    return (
-        datos.groupby(
-            [
-                "vencimiento",
-                "dte",
-            ],
-            as_index=False,
-        )[columnas]
-        .sum()
+    resultado = datos.copy()
+    resultado["vencimiento"] = pd.to_datetime(resultado["vencimiento"]).dt.normalize()
+    return resultado.groupby("vencimiento", as_index=False).agg(
+        {"dte": "min", **{columna: "sum" for columna in columnas}}
     )
 
 

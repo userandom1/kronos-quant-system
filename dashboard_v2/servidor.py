@@ -16,6 +16,7 @@ from starlette.staticfiles import StaticFiles
 from motor_sistema.api_v2 import (
     api_activo,
     api_health,
+    api_informe,
     api_universo,
     api_watchlist,
     api_watchlists,
@@ -49,7 +50,7 @@ def respuesta_error(
                 error
             ).__name__,
         },
-        status_code=500,
+        status_code=400 if isinstance(error, (ValueError, KeyError)) else 500,
     )
 
 
@@ -74,7 +75,7 @@ async def favicon(
     )
 
 
-async def health(
+def health(
     request,
 ) -> JSONResponse:
     """API de Health Check."""
@@ -90,7 +91,7 @@ async def health(
         )
 
 
-async def activo(
+def activo(
     request,
 ) -> JSONResponse:
     """API de análisis individual."""
@@ -111,6 +112,9 @@ async def activo(
             )
         )
 
+        if not 1 <= horizonte <= 512:
+            raise ValueError("Horizonte fuera de 1..512 sesiones.")
+
         resultado = api_activo(
             simbolo=simbolo,
             horizonte=horizonte,
@@ -126,7 +130,7 @@ async def activo(
         )
 
 
-async def universo(
+def universo(
     request,
 ) -> JSONResponse:
     """API de análisis de universo."""
@@ -154,7 +158,7 @@ async def universo(
         )
 
 
-async def watchlists(
+def watchlists(
     request,
 ) -> JSONResponse:
     """API con las watchlists disponibles."""
@@ -170,7 +174,7 @@ async def watchlists(
         )
 
 
-async def watchlist(
+def watchlist(
     request,
 ) -> JSONResponse:
     """API de análisis de watchlist."""
@@ -198,7 +202,18 @@ async def watchlist(
         )
 
 
+def informe(request) -> JSONResponse:
+    """Entrega la última investigación guardada sin lanzar un nuevo cálculo."""
+    try:
+        return JSONResponse(api_informe(request.path_params["simbolo"]))
+    except FileNotFoundError:
+        return JSONResponse({"error": "No hay informes del nuevo formato para este activo."}, status_code=404)
+    except Exception as error:
+        return respuesta_error(error)
+
+
 rutas = [
+    Route("/api/v2/informe/{simbolo}", informe),
     Route(
         "/",
         inicio,

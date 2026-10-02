@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from core.activos import Activo
+from motor_opciones.calidad_cadena import evaluar_calidad_cadena
 from core.datos import obtener_proveedor
 from motor_opciones.cadena_opciones import (
     enriquecer_cadena,
@@ -24,7 +25,7 @@ class ResultadoOptionsEngine:
     spot: float
     vencimiento: str
     cadena: pd.DataFrame
-    resumen: dict[str, float | int]
+    resumen: dict[str, object]
 
 
 def seleccionar_vencimiento(
@@ -47,7 +48,12 @@ def seleccionar_vencimiento(
 
         return solicitado
 
-    return vencimientos[0]
+    # La fuente solo aporta la fecha: evitar seleccionar 0DTE sin hora exacta.
+    hoy = pd.Timestamp.now(tz="UTC").date()
+    futuros = [v for v in vencimientos if pd.Timestamp(v).date() > hoy]
+    if not futuros:
+        raise ValueError("Solo hay vencimientos expirados o 0DTE sin hora precisa.")
+    return sorted(futuros)[0]
 
 
 def ejecutar_options_engine(
@@ -89,9 +95,15 @@ def ejecutar_options_engine(
         spot,
     )
 
+    cadena, _, calidad = evaluar_calidad_cadena(cadena)
+    if cadena.empty:
+        raise ValueError(f"Sin contratos utilizables: {calidad}")
+
     resumen = resumir_cadena(
         cadena
     )
+
+    resumen["calidad"] = calidad
 
     return ResultadoOptionsEngine(
         activo=activo,

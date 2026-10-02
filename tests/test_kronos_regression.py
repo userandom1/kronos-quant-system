@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from model import Kronos, KronosPredictor, KronosTokenizer
 
+pytestmark = pytest.mark.modelos
+
 TEST_DATA_ROOT = Path(__file__).parent / "data"
 INPUT_DATA_PATH = TEST_DATA_ROOT / "regression_input.csv"
 
@@ -59,8 +61,8 @@ def test_kronos_predictor_regression(context_len):
     future_timestamp = df["timestamps"].iloc[context_len:context_len + len(expected_df)].reset_index(drop=True)
     expected = expected_df[FEATURE_NAMES].values.astype(np.float32)
 
-    tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base", revision=TOKENIZER_REVISION)
-    model = Kronos.from_pretrained("NeoQuasar/Kronos-small", revision=MODEL_REVISION)
+    tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base", revision=TOKENIZER_REVISION, cache_dir=str(Path(__file__).resolve().parents[1] / ".cache" / "huggingface"))
+    model = Kronos.from_pretrained("NeoQuasar/Kronos-small", revision=MODEL_REVISION, cache_dir=str(Path(__file__).resolve().parents[1] / ".cache" / "huggingface"))
     tokenizer.eval()
     model.eval()
 
@@ -95,8 +97,8 @@ def test_kronos_predictor_mse(context_len, expected_mse):
     if df.shape[0] <= context_len + MSE_PRED_LEN:
         raise ValueError("Example data does not contain enough rows for the random sample regression test.")
 
-    tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base", revision=TOKENIZER_REVISION)
-    model = Kronos.from_pretrained("NeoQuasar/Kronos-small", revision=MODEL_REVISION)
+    tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base", revision=TOKENIZER_REVISION, cache_dir=str(Path(__file__).resolve().parents[1] / ".cache" / "huggingface"))
+    model = Kronos.from_pretrained("NeoQuasar/Kronos-small", revision=MODEL_REVISION, cache_dir=str(Path(__file__).resolve().parents[1] / ".cache" / "huggingface"))
     tokenizer.eval()
     model.eval()
 

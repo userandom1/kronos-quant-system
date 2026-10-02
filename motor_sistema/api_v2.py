@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import math
-from dataclasses import asdict, is_dataclass
-from datetime import date, datetime
+import json
+import re
+from threading import RLock
 from pathlib import Path
-from typing import Any
-
-import numpy as np
-import pandas as pd
 
 from core.activos.universos import (
     listar_universos,
@@ -32,152 +28,7 @@ from motor_sistema.workspaces import (
 )
 
 
-def serializar_json(
-    valor: Any,
-) -> Any:
-    """Convierte estructuras internas a JSON seguro."""
-
-    if valor is None:
-        return None
-
-    if isinstance(
-        valor,
-        (
-            str,
-            bool,
-            int,
-        ),
-    ):
-        return valor
-
-    if isinstance(
-        valor,
-        float,
-    ):
-        if not math.isfinite(
-            valor
-        ):
-            return None
-
-        return valor
-
-    if isinstance(
-        valor,
-        np.generic,
-    ):
-        return serializar_json(
-            valor.item()
-        )
-
-    if isinstance(
-        valor,
-        np.ndarray,
-    ):
-        return [
-            serializar_json(
-                elemento
-            )
-            for elemento in valor.tolist()
-        ]
-
-    if isinstance(
-        valor,
-        (
-            datetime,
-            date,
-            pd.Timestamp,
-        ),
-    ):
-        return valor.isoformat()
-
-    if isinstance(
-        valor,
-        Path,
-    ):
-        return str(
-            valor
-        )
-
-    if isinstance(
-        valor,
-        pd.DataFrame,
-    ):
-        return [
-            serializar_json(
-                fila
-            )
-            for fila in valor.to_dict(
-                orient="records"
-            )
-        ]
-
-    if isinstance(
-        valor,
-        pd.Series,
-    ):
-        return {
-            str(clave): serializar_json(
-                dato
-            )
-            for clave, dato
-            in valor.to_dict().items()
-        }
-
-    if isinstance(
-        valor,
-        pd.Index,
-    ):
-        return [
-            serializar_json(
-                elemento
-            )
-            for elemento in valor.tolist()
-        ]
-
-    if is_dataclass(
-        valor
-    ):
-        return serializar_json(
-            asdict(
-                valor
-            )
-        )
-
-    if isinstance(
-        valor,
-        dict,
-    ):
-        return {
-            str(clave): serializar_json(
-                dato
-            )
-            for clave, dato
-            in valor.items()
-        }
-
-    if isinstance(
-        valor,
-        (
-            list,
-            tuple,
-            set,
-        ),
-    ):
-        return [
-            serializar_json(
-                elemento
-            )
-            for elemento in valor
-        ]
-
-    if pd.isna(
-        valor
-    ):
-        return None
-
-    return str(
-        valor
-    )
+from core.serializacion import serializar_json
 
 
 def api_health() -> dict[str, object]:
@@ -206,7 +57,7 @@ def api_activo(
 ) -> dict[str, object]:
     """Ejecuta análisis completo de un activo."""
 
-    resultado = analizar_activo_completo(
+    resultado = ejecutar_serializado(analizar_activo_completo,
         simbolo=simbolo,
         horizonte_forecast=horizonte,
     )
@@ -265,7 +116,7 @@ def api_universo(
         nombre
     )
 
-    resultado = analizar_universo_completo(
+    resultado = ejecutar_serializado(analizar_universo_completo,
         simbolos
     )
 
@@ -293,7 +144,7 @@ def api_watchlist(
         nombre
     )
 
-    resultado = analizar_universo_completo(
+    resultado = ejecutar_serializado(analizar_universo_completo,
         simbolos
     )
 
@@ -302,3 +153,27 @@ def api_watchlist(
         simbolos=simbolos,
         resultado=resultado,
     )
+
+_LOCK_ANALISIS = RLock()
+
+
+def ejecutar_serializado(funcion, *args, **kwargs):
+    """Protege el predictor compartido; Starlette ejecuta las rutas en hilos."""
+    with _LOCK_ANALISIS:
+        return funcion(*args, **kwargs)
+
+
+def api_informe(simbolo: str) -> dict[str, object]:
+    """Lee el informe persistido más reciente, validando el segmento de ruta."""
+    from core.activos import resolver_activo
+    simbolo = resolver_activo(simbolo).simbolo
+    if not re.fullmatch(r"[A-Z0-9^=_.-]{1,40}", simbolo):
+        raise ValueError("Símbolo no válido.")
+    nombre = re.sub(r"[^A-Za-z0-9_.-]", "_", simbolo).strip("._")
+    if not nombre:
+        raise ValueError("Símbolo vacío.")
+    base = Path(__file__).resolve().parents[1] / "resultados" / "deep_research"
+    candidatos = sorted((base / nombre).glob("*/informe.json"), reverse=True)
+    if not candidatos:
+        raise FileNotFoundError(simbolo)
+    return json.loads(candidatos[0].read_text(encoding="utf-8"))

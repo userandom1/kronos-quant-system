@@ -107,90 +107,30 @@ def calcular_exposiciones_dealer(
     return resultado
 
 
-def calcular_niveles_dealer(
-    cadena: pd.DataFrame,
-) -> dict[str, float]:
-    """Calcula nodos principales por strike."""
+def calcular_niveles_dealer(cadena: pd.DataFrame) -> dict[str, float | None]:
+    """Walls: máximo OI agregado por strike y tipo; nodos respetan su signo."""
+    if cadena.empty:
+        raise ValueError("No existen contratos válidos para calcular dealer.")
+    por_strike = cadena.groupby("strike")["gex_1pct"].sum()
+    positivos = por_strike[por_strike > 0]
+    negativos = por_strike[por_strike < 0]
 
-    por_strike = (
-        cadena
-        .groupby(
-            "strike",
-            as_index=False,
-        )
-        .agg(
-            gex_1pct=(
-                "gex_1pct",
-                "sum",
-            ),
-            dex=(
-                "dex",
-                "sum",
-            ),
-            open_interest=(
-                "open_interest",
-                "sum",
-            ),
-        )
-    )
-
-    positivo = por_strike.loc[
-        por_strike[
-            "gex_1pct"
-        ].idxmax()
-    ]
-
-    negativo = por_strike.loc[
-        por_strike[
-            "gex_1pct"
-        ].idxmin()
-    ]
-
-    calls = cadena[
-        cadena[
-            "tipo_opcion"
-        ] == "CALL"
-    ]
-
-    puts = cadena[
-        cadena[
-            "tipo_opcion"
-        ] == "PUT"
-    ]
-
-    call_wall = float(
-        calls.loc[
-            calls[
-                "open_interest"
-            ].idxmax(),
-            "strike",
-        ]
-    )
-
-    put_wall = float(
-        puts.loc[
-            puts[
-                "open_interest"
-            ].idxmax(),
-            "strike",
-        ]
-    )
+    def wall(tipo: str) -> float | None:
+        lado = cadena[cadena["tipo_opcion"].str.upper() == tipo]
+        oi = lado.groupby("strike")["open_interest"].sum()
+        return float(oi.idxmax()) if not oi.empty and oi.max() > 0 else None
 
     return {
-        "gamma_node_positivo": float(
-            positivo["strike"]
-        ),
-        "gamma_node_negativo": float(
-            negativo["strike"]
-        ),
-        "call_wall": call_wall,
-        "put_wall": put_wall,
+        "gamma_node_positivo": float(positivos.idxmax()) if not positivos.empty else None,
+        "gamma_node_negativo": float(negativos.idxmin()) if not negativos.empty else None,
+        "call_wall": wall("CALL"),
+        "put_wall": wall("PUT"),
     }
 
 
 def resumir_dealer(
     cadena: pd.DataFrame,
-) -> dict[str, float]:
+) -> dict[str, float | None]:
     """Resume las exposiciones estructurales."""
 
     niveles = calcular_niveles_dealer(

@@ -61,7 +61,7 @@ def construir_senales(
 
 def ejecutar_portfolio_universal(
     simbolos: list[str],
-    max_peso: float = 0.35,
+    max_peso: float | None = None,
 ) -> ResultadoPortfolio:
     """Ejecuta los principales portfolios universales."""
 

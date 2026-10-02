@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
+import numpy as np
 import pandas as pd
 
 from core.activos import resolver_activo
@@ -19,6 +20,9 @@ def ejecutar_forecast(
 ) -> pd.DataFrame:
     """Ejecuta varios modelos sobre un activo."""
 
+    if isinstance(horizonte, bool) or not isinstance(horizonte, int) or not 1 <= horizonte <= 512:
+        raise ValueError("El horizonte debe ser un entero entre 1 y 512 sesiones.")
+    errores = {}
     activo = resolver_activo(
         simbolo
     )
@@ -44,15 +48,16 @@ def ejecutar_forecast(
     ] = []
 
     for nombre in modelos_finales:
-        modelo = obtener_modelo(
-            nombre
-        )
-
-        resultado = modelo.predecir(
-            activo=activo,
-            datos=datos,
-            horizonte=horizonte,
-        )
+        try:
+            modelo = obtener_modelo(nombre)
+            resultado = modelo.predecir(activo=activo, datos=datos, horizonte=horizonte)
+            if not all(np.isfinite(x) for x in (
+                resultado.precio_actual, resultado.precio_estimado, resultado.retorno_estimado
+            )) or resultado.precio_actual <= 0 or resultado.precio_estimado <= 0:
+                raise ValueError("El modelo produjo una predicción no válida.")
+        except Exception as error:
+            errores[nombre] = str(error)
+            continue
 
         fila = asdict(
             resultado
@@ -72,9 +77,11 @@ def ejecutar_forecast(
             fila
         )
 
-    return pd.DataFrame(
-        resultados
-    )
+    if not resultados:
+        raise RuntimeError(f"No hay forecasts válidos: {errores}")
+    tabla = pd.DataFrame(resultados)
+    tabla.attrs["errores_modelos"] = errores
+    return tabla
 
 
 def construir_ensemble_simple(

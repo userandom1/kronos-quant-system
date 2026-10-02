@@ -79,25 +79,16 @@ def cvar_historico(
     )
 
 
-def max_drawdown(
-    retornos: pd.Series,
-) -> float:
-    """Calcula máximo drawdown histórico."""
-
-    curva = (
-        1.0
-        + retornos
-    ).cumprod()
-
-    drawdown = (
-        curva
-        / curva.cummax()
-        - 1.0
-    )
-
-    return float(
-        drawdown.min()
-    )
+def max_drawdown(retornos: pd.Series) -> float:
+    """Calcula drawdown incluyendo el capital inicial antes del primer retorno."""
+    valores = pd.to_numeric(retornos, errors="raise").dropna()
+    if valores.empty:
+        return float("nan")
+    if not np.isfinite(valores).all() or (valores < -1).any():
+        raise ValueError("Los retornos deben ser finitos y no inferiores a -100%.")
+    curva = (1.0 + valores).cumprod()
+    maximos = curva.cummax().clip(lower=1.0)
+    return float((curva / maximos - 1.0).min())
 
 
 def beta(
