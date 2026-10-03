@@ -1,6 +1,6 @@
 # Quant Platform — prioridades verificables
 
-Actualizado el 2 de octubre de 2026. Roadmap original conservado en documentacion/historico/ROADMAP_20260930.md. Priorizar utilidad, robustez y validación.
+Actualizado el 3 de octubre de 2026. Roadmap original conservado en documentacion/historico/ROADMAP_20260930.md. Priorizar utilidad, robustez y validación.
 
 ## Base entregada
 
@@ -8,13 +8,17 @@ V2.0 universal está implementada, con límites de clasificación/cobertura. V2.
 
 La base de Dealer por expiración de V2.2 está integrada: GEX/DEX/Vega/Vanna/Charm, Walls y perfiles/cruces Gamma por fecha, con lectura desde Dashboard V2. Pendientes tasas/dividendos/multiplicadores configurables, calendario/frescura y contraste externo. Sigue siendo proxy.
 
-## Próxima entrega: Expected Move
+## Expected Move — implementado e integrado
 
 1. Seleccionar call/put ATM del mismo strike/expiry en la cadena validada; informar falta de pareja o spread excesivo.
 2. Calcular straddle y aproximación spot × IV × sqrt(DTE/365), conservando ambos métodos con unidades explícitas.
 3. Guardar límites superior/inferior, move en dólares/porcentaje, DTE, IV y procedencia. No presentar automáticamente straddle como intervalo de confianza.
 4. Probar fórmulas, fechas, cadenas incompletas y calidad.
-5. Integrar CSV/JSON en Deep Research y tabla en dashboard antes de marcar completado.
+5. CSV/JSON integrados en Deep Research y auditoría; dashboard muestra ambos métodos por vencimiento.
+
+Validación: 68 pruebas globales pasadas y cinco snapshots históricos auditados (51 expiraciones con estimación, nueve sin ella). Ver documentacion/EXPECTED_MOVE.md.
+
+Próxima entrega funcional: IV Term Structure y Skew; la frescura/calendarios de cotización siguen siendo una prioridad transversal.
 
 ## Después
 

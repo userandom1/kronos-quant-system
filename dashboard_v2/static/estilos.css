@@ -194,3 +194,62 @@ td:first-child {
 .error {
     color: var(--negativo);
 }
+
+.aviso-motor {
+    min-width: 0;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.aviso-calidad {
+    color: #f0c675;
+    background: #f0c6750a;
+    border-color: #f0c67540;
+}
+
+.aviso-error {
+    color: var(--negativo);
+    background: #ff73730a;
+    border-color: #ff737340;
+}
+
+.aviso-motor p {
+    margin: 6px 0 0;
+}
+
+.aviso-motor details {
+    margin-top: 10px;
+}
+
+.aviso-motor summary {
+    cursor: pointer;
+}
+
+.movimiento-expiry {
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.movimiento-expiry summary {
+    cursor: pointer;
+    color: var(--acento);
+    line-height: 1.5;
+}
+
+.movimiento-expiry th,
+.movimiento-expiry td {
+    white-space: normal;
+    padding: 8px 4px;
+}
+
+.detalle-movimiento {
+    color: var(--secundario);
+    font-size: 13px;
+    line-height: 1.5;
+}

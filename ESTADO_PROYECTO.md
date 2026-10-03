@@ -1,6 +1,6 @@
 # Quant Platform — estado contrastado
 
-Actualizado el 2 de octubre de 2026. Código, Git y tests prevalecen. Documentos originales preservados íntegros en `documentacion/historico/`.
+Actualizado el 3 de octubre de 2026. Código, Git y tests prevalecen. Documentos originales preservados íntegros en `documentacion/historico/`.
 
 ## Git y entorno
 
@@ -47,4 +47,6 @@ Ver `documentacion/CAMBIOS_V21.md` para validación. Los informes existentes del
 
 YFinance como único proveedor, frescura bid/ask desconocida, calendarios/hora exacta pendientes, r/q/multiplicador/signo dealer fijos, Flow aproximado, duplicación legacy/universal, signal tilted sin calibración económica y calendarios mixtos de portfolio. Regresión técnica de Kronos no prueba rentabilidad; benchmark QQQ guardado tiene solo seis observaciones por modelo a 20 días. Dashboard carece aún de Options Lab, selector y monitor de trades. Persisten advertencias de dependencias. No se valida aquí trading en vivo ni ejecución de órdenes.
 
-Siguiente trabajo concreto: Expected Move por vencimiento sobre la cadena validada, con estimaciones straddle e IV, procedencia, pruebas e integración en informe/dashboard.
+Expected Move por vencimiento está integrado en Deep Research, auditoría CSV/JSON y dashboard. Usa una pareja ATM del mismo strike/fecha, mid recalculado y media de IV call/put; conserva estados sin estimación y procedencia histórica. Suite completa: 68 pruebas pasadas. Detalles en documentacion/EXPECTED_MOVE.md.
+
+Siguiente entrega funcional: IV Term Structure y Skew. La frescura de cotizaciones, calendarios y validación económica siguen pendientes.

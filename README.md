@@ -62,6 +62,7 @@ Dealer: proxy calls short/puts long, multiplicador 100, r=4%, q=1%; Walls por OI
 
 - [Estado contrastado](ESTADO_PROYECTO.md)
 - [Prioridades](ROADMAP.md)
+- [Expected Move: métodos, calidad y uso](documentacion/EXPECTED_MOVE.md)
 - [Cambios y validación](documentacion/CAMBIOS_V21.md)
 - [Instrucciones](AGENTS.md)
 - [Arquitectura histórica V1](documentacion/ARQUITECTURA_V1.md)

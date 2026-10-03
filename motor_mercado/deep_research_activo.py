@@ -26,6 +26,7 @@ from motor_opciones.escenarios_opciones import generar_graficas_escenarios
 from motor_opciones.graficas_avanzadas import generar_pack_graficas
 from motor_opciones.griegas_universales import aplicar_griegas
 from motor_opciones.indice_graficas import generar_indice_graficas
+from motor_opciones.movimiento_esperado import calcular_movimiento_esperado
 
 RUTA_BASE = Path(__file__).resolve().parents[1]
 RUTA_RESULTADOS = RUTA_BASE / "resultados" / "deep_research"
@@ -160,6 +161,7 @@ def ejecutar_deep_research_activo(
                 estados[f"forecast_{h}d"] = {"estado": "PARCIAL", "errores_modelos": tabla.attrs["errores_modelos"]}
 
     dealer, por_vencimiento, graficas = {}, [], {}
+    movimientos = []
     spot = mercado.get("precio")
     if activo.capacidades.opciones:
         resultado_opciones = etapa("opciones", lambda: obtener_cadena_multi_vencimiento(
@@ -174,6 +176,20 @@ def ejecutar_deep_research_activo(
                     "estado": "PARCIAL", "contratos_rechazados": rechazos,
                     "errores_vencimientos": cadena.attrs.get("errores_vencimientos", {}),
                 }
+            def calcular_movimientos():
+                archivo_rechazos = ruta / "contratos_rechazados.csv"
+                descartados = pd.read_csv(archivo_rechazos) if archivo_rechazos.exists() else None
+                tabla = calcular_movimiento_esperado(cadena, spot, rechazados=descartados)
+                tabla.to_csv(ruta / "expected_move_por_vencimiento.csv", index=False)
+                return tabla
+            tabla_movimientos = etapa("expected_move", calcular_movimientos)
+            if tabla_movimientos is not None:
+                movimientos = tabla_movimientos.to_dict(orient="records")
+                incompletos = int((tabla_movimientos["estado"] != "OK").sum())
+                if incompletos:
+                    estados["expected_move"] = {
+                        "estado": "PARCIAL", "vencimientos_sin_estimacion": incompletos,
+                    }
             def calcular_dealer():
                 total = resumir_dealer(cadena)
                 tabla, perfil = analizar_dealer_por_vencimiento(cadena, spot)
@@ -194,10 +210,11 @@ def ejecutar_deep_research_activo(
                 dte_objetivo=dte_escenarios,
             )) or {})
         else:
-            for nombre in ("dealer", "graficas", "escenarios"):
+            for nombre in ("dealer", "expected_move", "graficas", "escenarios"):
                 estados[nombre] = {"estado": "BLOQUEADO", "error": "Opciones no disponibles"}
     else:
         estados["opciones"] = {"estado": "NO_COMPATIBLE"}
+        estados["expected_move"] = {"estado": "NO_COMPATIBLE"}
     if graficas:
         indice = etapa("indice_graficas", lambda: generar_indice_graficas(
             ticker=ticker, graficas=graficas, ruta_salida=ruta_graficas / "indice_graficas.html"
@@ -225,6 +242,7 @@ def ejecutar_deep_research_activo(
         "ruta_resultados": str(ruta), "resumen": resumen, "mercado": mercado,
         "regimen": regimen, "forecast": forecasts, "dealer": dealer,
         "dealer_por_vencimiento": por_vencimiento, "graficas": graficas,
+        "expected_move_por_vencimiento": movimientos,
         "procedencia": {
             "inicio_utc": inicio.isoformat(), "fin_utc": datetime.now(timezone.utc).isoformat(),
             "fecha_mercado": mercado.get("fecha"), "proveedor": activo.proveedor,
@@ -234,6 +252,9 @@ def ejecutar_deep_research_activo(
             "convenciones": {"dealer": "PROXY_CALL_SHORT_PUT_LONG", "walls": "MAX_OI_POR_STRIKE",
                              "pricing": "BLACK_SCHOLES_EUROPEO", "tipo_interes": 0.04,
                              "dividendo": 0.01, "multiplicador": 100},
+            "expected_move": {"base_dias": 365, "distancia_atm_maxima": 0.02,
+                              "iv_atm": "MEDIA_CALL_PUT", "centro_limites": "SPOT",
+                              "probabilidad_calibrada": False},
         },
     }
     (ruta / "informe.json").write_text(json.dumps(

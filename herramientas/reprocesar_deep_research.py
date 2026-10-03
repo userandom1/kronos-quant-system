@@ -15,6 +15,7 @@ from motor_opciones.calidad_cadena import evaluar_calidad_cadena
 from motor_opciones.dealer_por_vencimiento import analizar_dealer_por_vencimiento
 from motor_opciones.dealer_universal import calcular_exposiciones_dealer, resumir_dealer
 from motor_opciones.griegas_universales import aplicar_griegas
+from motor_opciones.movimiento_esperado import calcular_movimiento_esperado
 
 
 def reprocesar(origen: Path, destino: Path) -> dict[str, object]:
@@ -30,6 +31,7 @@ def reprocesar(origen: Path, destino: Path) -> dict[str, object]:
     valida = calcular_exposiciones_dealer(aplicar_griegas(valida, spot), spot)
     total = resumir_dealer(valida)
     tabla, perfil = analizar_dealer_por_vencimiento(valida, spot)
+    movimientos = calcular_movimiento_esperado(cadena, spot)
     for columna in ("net_gex_1pct", "net_dex", "net_vega_1pt", "net_vanna_1pt", "net_charm_dia"):
         if not np.isclose(tabla[columna].sum(), total[columna], rtol=1e-10, atol=1e-5):
             raise AssertionError(f"No reconcilia {columna}: {origen}")
@@ -40,11 +42,13 @@ def reprocesar(origen: Path, destino: Path) -> dict[str, object]:
     exportable["gamma_flips"] = exportable["gamma_flips"].map(json.dumps)
     exportable.to_csv(destino / "dealer_por_vencimiento.csv", index=False)
     perfil.to_csv(destino / "perfil_gamma_por_vencimiento.csv", index=False)
+    movimientos.to_csv(destino / "expected_move_por_vencimiento.csv", index=False)
     informe = {
         "modo": "REPROCESADO_HISTORICO_SIN_RED", "origen": str(origen.resolve()),
         "fecha_snapshot": origen.name, "ticker": origen.parent.name, "spot_historico": spot,
         "calidad": calidad, "dealer": total,
         "dealer_por_vencimiento": tabla.to_dict(orient="records"),
+        "expected_move_por_vencimiento": movimientos.to_dict(orient="records"),
         "reconciliacion": "OK", "revision": _revision_codigo(),
         "advertencia": "Se conserva el DTE original. No es una cotización actual; la antigüedad de bid/ask no está verificada.",
     }
@@ -55,6 +59,8 @@ def reprocesar(origen: Path, destino: Path) -> dict[str, object]:
             "contratos_originales": len(cadena), "contratos_validos": len(valida),
             "contratos_rechazados": len(rechazada), "vencimientos": len(tabla),
             "gamma_flips": sum(map(len, tabla["gamma_flips"])),
+            "expected_move_validos": int((movimientos["estado"] == "OK").sum()),
+            "expected_move_no_disponibles": int((movimientos["estado"] != "OK").sum()),
             "call_wall": total["call_wall"], "put_wall": total["put_wall"],
             "reconciliacion": "OK"}
 

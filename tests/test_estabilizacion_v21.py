@@ -280,6 +280,16 @@ class DeepResearch(unittest.TestCase):
         informe = json.loads((Path(resultado["ruta_resultados"]) / "informe.json").read_text(encoding="utf-8"))
         self.assertEqual(informe["procedencia"]["parametros"]["horizontes"], [7])
         self.assertTrue((Path(resultado["ruta_resultados"]) / "dealer_por_vencimiento.csv").exists())
+        self.assertTrue((Path(resultado["ruta_resultados"]) / "expected_move_por_vencimiento.csv").exists())
+        self.assertEqual(len(informe["expected_move_por_vencimiento"]), 2)
+        self.assertEqual(informe["expected_move_por_vencimiento"][0]["move_straddle_dolares"], 4.)
+
+    def test_fallo_expected_move_no_oculta_dealer(self):
+        with patch.object(self.modulo, "calcular_movimiento_esperado", side_effect=ValueError("Pareja inválida")):
+            resultado = self.modulo.ejecutar_deep_research_activo("QQQ", horizonte=5)
+        self.assertEqual(resultado["estado"], "PARCIAL")
+        self.assertEqual(resultado["estados"]["expected_move"]["estado"], "ERROR")
+        self.assertEqual(resultado["estados"]["dealer"]["estado"], "OK")
 
     def test_fallo_grafico_no_oculta_dealer(self):
         self.graficas.side_effect = RuntimeError("Error de gráfico")
@@ -293,11 +303,13 @@ class DeepResearch(unittest.TestCase):
         resultado = self.modulo.ejecutar_deep_research_activo("QQQ", horizonte=5)
         self.assertEqual(resultado["estado"], "PARCIAL")
         self.assertEqual(resultado["estados"]["dealer"]["estado"], "BLOQUEADO")
+        self.assertEqual(resultado["estados"]["expected_move"]["estado"], "BLOQUEADO")
 
     def test_horizontes_por_defecto(self):
         resultado = self.modulo.ejecutar_deep_research_activo("BTC-USD")
         self.assertEqual(list(resultado["forecast"]), ["5", "20", "60"])
         self.assertEqual(resultado["estados"]["opciones"]["estado"], "NO_COMPATIBLE")
+        self.assertEqual(resultado["estados"]["expected_move"]["estado"], "NO_COMPATIBLE")
 
 
 class API(unittest.TestCase):
