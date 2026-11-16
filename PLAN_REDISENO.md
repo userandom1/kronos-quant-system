@@ -1,6 +1,6 @@
 # Rediseño de Kronos: Options Flow, Delta y Gamma
 
-Estado: propuesta de arquitectura para revisar antes de retirar código heredado.
+Estado: base limpia creada; contrato de datos propuesto para la siguiente revisión.
 Rama de trabajo: `re-design`. El proyecto anterior permanece en `quant-platform-v2` y en el respaldo local previo al rediseño.
 
 ## Producto y forma de uso

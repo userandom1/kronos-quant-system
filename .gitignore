@@ -1,107 +1,12 @@
-# Python
+.venv/
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# PyCharm
-.idea/
-
-# VS Code
-.vscode/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Linux
-*~
-
-# Data files (large files)
-*.feather
-*.parquet
-*.h5
-*.hdf5
-
-# Model files (large files)
-*.pth
-*.pt
-*.ckpt
-*.bin
-
-# Logs
-*.log
-logs/
-
-# Environment
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Temporary files
-*.tmp
-*.temp
-temp/
-tmp/
-.python-version
-# ============================================================
-# Kronos Quant System - archivos locales y regenerables
-# ============================================================
-
-# Cachés de modelos y Hugging Face
-.cache/
-
-# Resultados generados por los motores
-resultados/
-
-# Datos descargados o regenerables
-data/
-
-# Snapshots y salidas temporales
-snapshots/
-
-
-# Cobertura y herramientas de calidad
-.coverage
-coverage.xml
-htmlcov/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-
-# Archivos locales de ejecución
-*.pid
-
-# Backups locales
-*.bak
-*.backup
+.ipynb_checkpoints/
+.cache/
+.env
+resultados/
+*.log
+*.tmp

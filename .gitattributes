@@ -1,7 +1,6 @@
-# Normalizar texto de código y documentación; conservar imágenes como binarios.
 *.md text eol=lf
 *.py text eol=lf
-*.js text eol=lf
+*.ipynb text eol=lf
 *.png binary
-# Los documentos recibidos se archivan sin transformar sus bytes.
-documentacion/historico/*.md -text
+*.jpg binary
+*.jpeg binary
