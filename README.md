@@ -11,6 +11,8 @@ Nueva plataforma centrada en **Options Flow, Delta y Gamma**. Esta rama empieza 
 
 El alcance y el orden de reconstrucción están en [PLAN_REDISENO.md](PLAN_REDISENO.md). El sistema analiza capturas guardadas o nuevas desde `yfinance` y genera figuras personalizables en Jupyter.
 
+Las siete etapas, incluida la [validación integrada con datos reales](VALIDACION_INTEGRADA.md), están completadas para el alcance actual.
+
 ## Validar una captura
 
 Los archivos de `ejemplos/` son **sintéticos**, no datos de mercado. El JSON identifica la captura y el CSV contiene los contratos. Se necesita Python 3.12 o posterior.

@@ -1,6 +1,6 @@
 # Rediseño de Kronos: Options Flow, Delta y Gamma
 
-Estado: etapas 1–6 implementadas y verificadas.
+Estado: etapas 1–7 implementadas y verificadas; véase [VALIDACION_INTEGRADA.md](VALIDACION_INTEGRADA.md).
 Rama de trabajo: `re-design`. El proyecto anterior permanece en `quant-platform-v2` y en el respaldo local previo al rediseño.
 
 ## Producto y forma de uso
@@ -59,10 +59,11 @@ Una operación individual, cuando exista ese dato, tendrá un esquema aparte: id
 | 4. Actividad | Comparación de capturas; importación de operaciones cuando haya fuente | Ningún proxy se etiqueta como operación observada |
 | 5. Terminal | Comandos, tablas, errores y archivos de salida | Análisis repetible desde una captura guardada |
 | 6. Jupyter | Figuras parametrizadas con código y salida visible | Cada figura se puede personalizar y regenerar |
+| 7. Validación integrada con datos reales | Captura real, análisis completo, reproducción offline y notebook | Integridad, conciliaciones y límites documentados |
 
 La base de la nueva rama ya está limpia. El comando analiza archivos JSON/CSV o captura cadenas desde `yfinance`; guarda entradas, tablas, informe y manifiesto en carpetas nuevas. El notebook lee `informe.json`, muestra procedencia y SHA-256 y crea imágenes Delta, Gamma, actividad y escenario dealer opcional. Un ejemplo sintético ejecutado se versiona con el código y las imágenes dentro del `.ipynb`; una ejecución local de QQQ queda en `resultados/visualizaciones/`. La captura legacy disponible de QQQ no acredita timestamp UTC; su conversión requiere una política histórica explícita. La importación de operaciones individuales sigue pendiente de una fuente que las proporcione.
 
-Validación técnica del 16 de noviembre de 2026: 20 pruebas offline pasadas. Una captura de QQQ desde el proveedor devolvió 827 contratos en tres vencimientos; 521 tuvieron Delta/Gamma calculables y 306 contratos 0DTE quedaron omitidos por falta de hora exacta de expiración. La hora de cotización de cada bid/ask siguió desconocida. Otra captura permitió comparar estados de volumen; no se identificaron operaciones. Repetir offline un análisis guardado conservó la misma huella SHA-256 del informe. El notebook sintético generó seis imágenes; el de QQQ, cinco. Se ejecutó además una variante con tema oscuro, colores y filtro de strikes cambiados, que exportó seis PNG. Las ejecuciones de demostración usaron tasa y dividendo 0 como supuestos técnicos, no como parámetros validados de mercado.
+Validación técnica del 16 de noviembre de 2026: 21 pruebas offline pasadas. Una captura de QQQ desde el proveedor devolvió 827 contratos en tres vencimientos; 521 tuvieron Delta/Gamma calculables y 306 contratos 0DTE quedaron omitidos por falta de hora exacta de expiración. La hora de cotización de cada bid/ask siguió desconocida. Otra captura permitió comparar estados de volumen; no se identificaron operaciones. Repetir offline un análisis guardado conservó la misma huella SHA-256 del informe. El notebook sintético generó seis imágenes; la validación integrada con QQQ generó diez con el filtro de solo calls y tema oscuro. Las ejecuciones de demostración usaron tasa y dividendo 0 como supuestos técnicos, no como parámetros validados de mercado.
 
 ## Límites de la propuesta
 
