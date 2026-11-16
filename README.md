@@ -9,7 +9,7 @@ Nueva plataforma centrada en **Options Flow, Delta y Gamma**. Esta rama empieza 
 - Sin dashboard ni interfaz web.
 - Diferenciar operaciones individuales observadas de actividad estimada mediante comparaciones de capturas.
 
-El alcance y el orden de reconstrucción están en [PLAN_REDISENO.md](PLAN_REDISENO.md). El sistema ya analiza capturas guardadas o nuevas desde `yfinance`; las figuras personalizables de Jupyter corresponden a la etapa siguiente.
+El alcance y el orden de reconstrucción están en [PLAN_REDISENO.md](PLAN_REDISENO.md). El sistema analiza capturas guardadas o nuevas desde `yfinance` y genera figuras personalizables en Jupyter.
 
 ## Validar una captura
 
@@ -63,5 +63,20 @@ Los valores `0` de tasa y dividendo de la demostración son **supuestos de prueb
 Cada ejecución crea una carpeta nueva e incluye las entradas originales, `informe.json`, tablas CSV, `manifiesto.json` y huellas SHA-256. El informe conserva además la huella del código de análisis. Repetir con los mismos archivos, supuestos y código genera la misma huella del informe, aunque la carpeta tenga otro identificador. Los archivos bajo `resultados/` no se suben a Git.
 
 `yfinance` aporta el campo de última operación, que se conserva como tal. No aporta una hora verificable para cada bid/ask; esta queda desconocida y la descarga no certifica tiempo real. Para contratos `REGULAR` se supone multiplicador 100; otros tamaños se rechazan hasta verificar el entregable. Esta distinción sigue la [especificación de opciones estándar y ajustadas de OCC](https://www.theocc.com/clearance-and-settlement/clearing/equity-options-product-specifications). La [API de `yfinance`](https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html) se usa para vencimientos y cadenas, sin tratar su resultado como operaciones individuales.
+
+## Figuras en Jupyter
+
+Instala `requirements-notebook.txt` en un entorno Python 3.12 dentro de este proyecto y abre [notebooks/analisis_options_flow.ipynb](notebooks/analisis_options_flow.ipynb). El notebook incluido usa [ejemplos/informe_sintetico.json](ejemplos/informe_sintetico.json), marcado como datos sintéticos; ya contiene seis imágenes ejecutadas y el código que las generó. Selecciona el kernel de ese entorno y ejecuta todas las celdas después de cambiar la segunda celda de configuración.
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebook.txt
+```
+
+En `RUTA_INFORME` puedes elegir cualquier `informe.json` de `resultados/analisis/`. `FILTROS` controla vencimientos, calls/puts, strikes y distancia al spot; la vista por vencimiento se vuelve a agregar desde los strikes seleccionados. `ESTILO` permite cambiar tema, colores, tamaño, resolución, fuente, títulos, etiquetas, unidades, límites y escala. `SERIES` permite activar gráficos, líneas, cuadrícula, leyenda y anotaciones. `EXPORTACION` guarda PNG, SVG o PDF cuando `activar=True`; los nombres incorporan una huella del informe y de la configuración para evitar colisiones. La fuente y su SHA-256 aparecen en el notebook. Cada imagen se conserva también como salida de la celda con su código.
+
+Por ejemplo, cambia `ESTILO["tema"]` a `"dark_background"`, `ESTILO["colores"]["CALL"]` a `"#ff46bc"` y `FILTROS["max_strikes"]` a `2`; después ejecuta todas las celdas. Para otra captura, cambia `RUTA_INFORME`. El informe de origen permanece intacto. Los datos numéricos completos siguen disponibles en la terminal y en los CSV de cada ejecución.
+
+También se ha ejecutado localmente el notebook con una comparación de capturas de QQQ en `resultados/visualizaciones/qqq_20261116/analisis_options_flow.ipynb`: produjo cinco imágenes y archivos PNG. Esos resultados locales quedan fuera de Git. Esa comparación no mostró incrementos comparables de volumen; el gráfico lo indica sin atribuir dirección de órdenes.
 
 La versión anterior sigue en la rama `quant-platform-v2`. El checkout original y el respaldo local previo al rediseño conservan también los cambios que no estaban en commits.

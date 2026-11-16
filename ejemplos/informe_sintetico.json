@@ -1,0 +1,257 @@
+{
+  "actividad": {
+    "contratos": [
+      {
+        "cambio_iv": "-0.01",
+        "cambio_oi_reportado": -2,
+        "estado_volumen": "VOLUMEN_RETROCEDE",
+        "id_contrato": "QQQ-20261116-P595",
+        "incremento_volumen_estimado": null,
+        "prima_mid_estimativa": null,
+        "strike": "595",
+        "tipo": "PUT",
+        "vencimiento": "2026-11-16",
+        "volumen_actual": 16,
+        "volumen_anterior": 18
+      },
+      {
+        "cambio_iv": "0.01",
+        "cambio_oi_reportado": 0,
+        "estado_volumen": "COMPARABLE",
+        "id_contrato": "QQQ-20261120-C600",
+        "incremento_volumen_estimado": 10,
+        "prima_mid_estimativa": "12450.00",
+        "strike": "600",
+        "tipo": "CALL",
+        "vencimiento": "2026-11-20",
+        "volumen_actual": 145,
+        "volumen_anterior": 135
+      },
+      {
+        "cambio_iv": null,
+        "cambio_oi_reportado": null,
+        "estado_volumen": "SIN_BASE_ANTERIOR",
+        "id_contrato": "QQQ-20261120-C610",
+        "incremento_volumen_estimado": null,
+        "prima_mid_estimativa": null,
+        "strike": "610",
+        "tipo": "CALL",
+        "vencimiento": "2026-11-20",
+        "volumen_actual": 25,
+        "volumen_anterior": null
+      }
+    ],
+    "contratos_desaparecidos": [],
+    "id_actual": "EJEMPLO-QQQ-20261116-2",
+    "id_anterior": "EJEMPLO-QQQ-20261116",
+    "misma_fecha_mercado": true,
+    "tipo_dato": "COMPARACION_DE_CAPTURAS_NO_OPERACIONES"
+  },
+  "actividad_por_strike": [
+    {
+      "contratos_actuales": 1,
+      "contratos_comparables": 0,
+      "incremento_volumen_estimado": null,
+      "prima_mid_estimativa": null,
+      "strike": "595",
+      "tipo": "PUT",
+      "vencimiento": "2026-11-16"
+    },
+    {
+      "contratos_actuales": 1,
+      "contratos_comparables": 1,
+      "incremento_volumen_estimado": 10,
+      "prima_mid_estimativa": "12450.00",
+      "strike": "600",
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    },
+    {
+      "contratos_actuales": 1,
+      "contratos_comparables": 0,
+      "incremento_volumen_estimado": null,
+      "prima_mid_estimativa": null,
+      "strike": "610",
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "actividad_por_vencimiento": [
+    {
+      "contratos_actuales": 1,
+      "contratos_comparables": 0,
+      "incremento_volumen_estimado": null,
+      "prima_mid_estimativa": null,
+      "strike": null,
+      "tipo": "PUT",
+      "vencimiento": "2026-11-16"
+    },
+    {
+      "contratos_actuales": 2,
+      "contratos_comparables": 1,
+      "incremento_volumen_estimado": 10,
+      "prima_mid_estimativa": "12450.00",
+      "strike": null,
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "advertencias": [
+    "OI pondera una hipótesis de contratos largos; no identifica titulares ni posiciones dealer.",
+    "El volumen incremental se estima entre capturas; no son operaciones individuales.",
+    "La prima mid estimativa no es precio de ejecución observado.",
+    "La frecuencia y frescura de actualización del open interest no están verificadas.",
+    "Black-Scholes-Merton europeo aproxima opciones americanas.",
+    "Las horas de cotización ausentes impiden verificar frescura bid/ask."
+  ],
+  "agregados_strike": [
+    {
+      "contratos_con_griegas": 1,
+      "contratos_con_oi": 1,
+      "delta_oi_unidades": 28722.17549006421,
+      "gamma_oi_unidades_por_precio": 1440.5518311754888,
+      "oi_conocido": 540,
+      "strike": 600.0,
+      "supuesto": "CADA_CONTRATO_ABIERTO_LARGO",
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    },
+    {
+      "contratos_con_griegas": 1,
+      "contratos_con_oi": 1,
+      "delta_oi_unidades": 3793.3886320465517,
+      "gamma_oi_unidades_por_precio": 363.0765448586427,
+      "oi_conocido": 150,
+      "strike": 610.0,
+      "supuesto": "CADA_CONTRATO_ABIERTO_LARGO",
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "agregados_vencimiento": [
+    {
+      "contratos_con_griegas": 2,
+      "contratos_con_oi": 2,
+      "delta_oi_unidades": 32515.564122110765,
+      "gamma_oi_unidades_por_precio": 1803.6283760341316,
+      "oi_conocido": 690,
+      "strike": null,
+      "supuesto": "CADA_CONTRATO_ABIERTO_LARGO",
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "captura_actual": {
+    "filas": 3,
+    "metadatos": {
+      "capturado_en_utc": "2026-11-16T15:05:00+00:00",
+      "divisa": "USD",
+      "fuente_spot": "EJEMPLO_SINTETICO",
+      "id_captura": "EJEMPLO-QQQ-20261116-2",
+      "proveedor": "EJEMPLO_SINTETICO",
+      "spot": "600.80",
+      "spot_observado_en_utc": "2026-11-16T15:04:50+00:00",
+      "subyacente": "QQQ",
+      "zona_mercado": "America/New_York"
+    },
+    "rechazados": 0,
+    "sha256_csv": "b18a940a4c16ec599bdd3f6c685dbc9f6f7df44162de1ce1fb7fa22abf8e49aa",
+    "sha256_metadatos": "0d76d2759bd673ccffe1c19460e28d586fe019a41778d6d698f863ceecd3eda1",
+    "validos": 3
+  },
+  "captura_anterior": {
+    "metadatos": {
+      "capturado_en_utc": "2026-11-16T15:00:00+00:00",
+      "divisa": "USD",
+      "fuente_spot": "EJEMPLO_SINTETICO",
+      "id_captura": "EJEMPLO-QQQ-20261116",
+      "proveedor": "EJEMPLO_SINTETICO",
+      "spot": "600.25",
+      "spot_observado_en_utc": "2026-11-16T14:59:50+00:00",
+      "subyacente": "QQQ",
+      "zona_mercado": "America/New_York"
+    },
+    "sha256_csv": "612b51c6400abdfdc34c2c0c57ddf0f3a79643f6acb5705459f11842a19cdfe1",
+    "sha256_metadatos": "dd6e702d730617bec2cd58ff1126acba44217a58276928f337d05824443f4f66"
+  },
+  "escenario_dealer_strike": [
+    {
+      "contratos_con_griegas": 1,
+      "contratos_con_oi": 1,
+      "convencion": "HIPOTESIS_CALLS_CORTAS_PUTS_LARGAS",
+      "delta_oi_unidades": -28722.17549006421,
+      "gamma_oi_unidades_por_precio": -1440.5518311754888,
+      "strike": 600.0,
+      "vencimiento": "2026-11-20"
+    },
+    {
+      "contratos_con_griegas": 1,
+      "contratos_con_oi": 1,
+      "convencion": "HIPOTESIS_CALLS_CORTAS_PUTS_LARGAS",
+      "delta_oi_unidades": -3793.3886320465517,
+      "gamma_oi_unidades_por_precio": -363.0765448586427,
+      "strike": 610.0,
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "escenario_dealer_vencimiento": [
+    {
+      "contratos_con_griegas": 2,
+      "contratos_con_oi": 2,
+      "convencion": "HIPOTESIS_CALLS_CORTAS_PUTS_LARGAS",
+      "delta_oi_unidades": -32515.564122110765,
+      "gamma_oi_unidades_por_precio": -1803.6283760341316,
+      "strike": null,
+      "vencimiento": "2026-11-20"
+    }
+  ],
+  "griegas": [
+    {
+      "delta": 0.5318921387048928,
+      "dividendo_anual": 0.01,
+      "gamma": 0.02667688576250905,
+      "id_captura": "EJEMPLO-QQQ-20261116-2",
+      "id_contrato": "QQQ-20261120-C600",
+      "modelo": "BLACK_SCHOLES_MERTON_EUROPEO",
+      "multiplicador": 100,
+      "precision_tiempo": "HORA_EXACTA",
+      "spot": 600.8,
+      "strike": 600.0,
+      "tasa_anual": 0.04,
+      "tiempo_anos": 0.011634322678843227,
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20",
+      "volatilidad": 0.23
+    },
+    {
+      "delta": 0.2528925754697701,
+      "dividendo_anual": 0.01,
+      "gamma": 0.02420510299057618,
+      "id_captura": "EJEMPLO-QQQ-20261116-2",
+      "id_contrato": "QQQ-20261120-C610",
+      "modelo": "BLACK_SCHOLES_MERTON_EUROPEO",
+      "multiplicador": 100,
+      "precision_tiempo": "DIAS_CALENDARIO",
+      "spot": 600.8,
+      "strike": 610.0,
+      "tasa_anual": 0.04,
+      "tiempo_anos": 0.010958904109589041,
+      "tipo": "CALL",
+      "vencimiento": "2026-11-20",
+      "volatilidad": 0.21
+    }
+  ],
+  "omitidos_griegas": [
+    {
+      "id_contrato": "QQQ-20261116-P595",
+      "motivo": "hora_expiracion_desconocida"
+    }
+  ],
+  "sha256_codigo_analisis": "af9fa5821cb81c57d712835d2c5338d38d7b05b5fba22cb506a5cb0a42e80566",
+  "supuestos": {
+    "dividendo_anual": 0.01,
+    "tasa_anual": 0.04
+  },
+  "tipo_resultado": "ANALISIS_DE_CADENA_Y_CAPTURAS",
+  "version_reporte": 1
+}
