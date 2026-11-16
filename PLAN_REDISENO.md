@@ -1,6 +1,6 @@
 # Rediseño de Kronos: Options Flow, Delta y Gamma
 
-Estado: base limpia creada; contrato de datos propuesto para la siguiente revisión.
+Estado: primera implementación del contrato de capturas; pendiente de revisión antes de calcular Greeks.
 Rama de trabajo: `re-design`. El proyecto anterior permanece en `quant-platform-v2` y en el respaldo local previo al rediseño.
 
 ## Producto y forma de uso
@@ -61,6 +61,8 @@ Una operación individual, cuando exista ese dato, tendrá un esquema aparte: id
 | 6. Jupyter | Figuras parametrizadas con código y salida visible | Cada figura se puede personalizar y regenerar |
 
 La primera revisión será el **contrato de datos**, antes de vaciar los módulos heredados de la nueva rama.
+
+La primera implementación valida archivos JSON/CSV guardados y deja una muestra sintética reproducible. La captura legacy disponible de QQQ no acredita timestamp UTC; su conversión requiere una política histórica explícita. La importación de operaciones individuales y el cálculo de Greeks siguen pendientes de sus etapas correspondientes.
 
 ## Límites de la propuesta
 
