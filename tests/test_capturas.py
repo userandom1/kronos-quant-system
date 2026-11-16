@@ -86,6 +86,15 @@ class ContratoCapturasTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "columnas_duplicadas"):
                 cargar_captura(metadatos, contratos)
 
+    def test_fecha_de_vencimiento_obligatoria(self) -> None:
+        with self._archivos_temporales() as (metadatos, contratos):
+            fila = self._filas_ejemplo()[0]
+            fila["vencimiento"] = ""
+            self._escribir_csv(contratos, [fila])
+            captura = cargar_captura(metadatos, contratos)
+        self.assertEqual(len(captura.contratos), 0)
+        self.assertIn("vencimiento_invalido", captura.rechazos[0].motivos)
+
     def _filas_ejemplo(self) -> list[dict[str, str]]:
         with (EJEMPLOS / "contratos_sinteticos.csv").open(newline="", encoding="utf-8") as archivo:
             return list(csv.DictReader(archivo))

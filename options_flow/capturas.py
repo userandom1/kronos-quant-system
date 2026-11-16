@@ -60,7 +60,7 @@ class Contrato:
     cotizacion_utc: datetime | None
 
     def impedimento_griegas(self, captura: datetime, zona_mercado: str) -> str | None:
-        """Indica si falta tiempo fiable hasta el vencimiento."""
+        """Exige fecha y bloquea 0DTE sin hora exacta de expiración."""
         if self.expiracion_utc is not None:
             if self.expiracion_utc <= captura:
                 return "expirado"

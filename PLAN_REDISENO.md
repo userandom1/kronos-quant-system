@@ -1,6 +1,6 @@
 # Rediseño de Kronos: Options Flow, Delta y Gamma
 
-Estado: primera implementación del contrato de capturas; pendiente de revisión antes de calcular Greeks.
+Estado: contrato de capturas y cálculo Delta/Gamma por contrato implementados; pendiente de revisión antes de agregados.
 Rama de trabajo: `re-design`. El proyecto anterior permanece en `quant-platform-v2` y en el respaldo local previo al rediseño.
 
 ## Producto y forma de uso
@@ -35,7 +35,7 @@ Una captura consta de metadatos comunes y filas de contratos. Los metadatos incl
 
 Cada contrato conserva `id_contrato`, tipo `CALL`/`PUT`, strike, vencimiento, multiplicador, bid, ask, IV, volumen acumulado y open interest. La fecha de vencimiento y la hora exacta de expiración son campos distintos. Los campos numéricos usan unidades declaradas: IV decimal, primas por acción o unidad de contrato, volumen y OI en contratos. El identificador del proveedor y el contrato normalizado se conservan por separado para detectar colisiones o cambios de símbolo.
 
-La validación devuelve tres salidas: contratos válidos, contratos rechazados con todos sus motivos y resumen de cobertura. No convierte ausencias en ceros ni inventa IV, cotizaciones o tiempo hasta expiración. Si no se conoce la hora de expiración de un contrato 0DTE, no se calcularán Greeks para él. Los cálculos guardarán spot, IV, tiempo, tasa, dividendo, fórmula y multiplicador usados.
+La validación devuelve tres salidas: contratos válidos, contratos rechazados con todos sus motivos y resumen de cobertura. No convierte ausencias en ceros ni inventa IV o cotizaciones. **La fecha de vencimiento siempre es obligatoria.** Si falta solo la hora, una fecha futura admite tiempo aproximado en días naturales y queda etiquetada como tal; un contrato 0DTE no admite cálculo de Greeks sin hora exacta. Los cálculos guardarán spot, IV, tiempo, tasa, dividendo, fórmula y multiplicador usados.
 
 Una operación individual, cuando exista ese dato, tendrá un esquema aparte: identificador, contrato, hora de ejecución UTC, precio, tamaño, mercado/fuente y, solo si la fuente lo permite, clasificación de agresor y método de clasificación. Una comparación de capturas nunca se transformará en filas de operaciones individuales.
 
