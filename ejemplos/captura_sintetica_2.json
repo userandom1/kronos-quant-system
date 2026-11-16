@@ -1,0 +1,12 @@
+{
+  "version_esquema": 1,
+  "id_captura": "EJEMPLO-QQQ-20261116-2",
+  "subyacente": "QQQ",
+  "proveedor": "EJEMPLO_SINTETICO",
+  "capturado_en_utc": "2026-11-16T15:05:00+00:00",
+  "spot": "600.80",
+  "divisa": "USD",
+  "fuente_spot": "EJEMPLO_SINTETICO",
+  "spot_observado_en_utc": "2026-11-16T15:04:50+00:00",
+  "zona_mercado": "America/New_York"
+}

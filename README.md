@@ -9,7 +9,7 @@ Nueva plataforma centrada en **Options Flow, Delta y Gamma**. Esta rama empieza 
 - Sin dashboard ni interfaz web.
 - Diferenciar operaciones individuales observadas de actividad estimada mediante comparaciones de capturas.
 
-El alcance, el contrato de datos inicial y el orden de reconstrucción están en [PLAN_REDISENO.md](PLAN_REDISENO.md). La primera etapa acepta capturas guardadas; todavía no calcula Delta ni Gamma.
+El alcance y el orden de reconstrucción están en [PLAN_REDISENO.md](PLAN_REDISENO.md). El sistema ya analiza capturas guardadas o nuevas desde `yfinance`; las figuras personalizables de Jupyter corresponden a la etapa siguiente.
 
 ## Validar una captura
 
@@ -39,5 +39,29 @@ Gamma     = e^(-qT) φ(d1) / (S σ√T)
 `T` se expresa en años de 365 días. Si existe hora de expiración, se calcula con segundos; de lo contrario, solo para fechas futuras, se usan días naturales completos y se muestra esa precisión. El modelo europeo aproxima contratos americanos y no verifica por sí solo la actualidad de bid/ask o IV. Bases teóricas: [Black y Scholes (1973)](https://www.journals.uchicago.edu/doi/10.1086/260062) y [Merton (1973)](https://ideas.repec.org/a/rje/bellje/v4y1973ispringp141-183.html).
 
 La captura histórica `snapshot_20260925_105333.csv` del proyecto anterior no incluye una hora UTC verificada de captura ni de cotización. No se importará como captura nueva inventando esas horas; se revisará su migración como dato histórico separado.
+
+## Análisis completo desde terminal
+
+En Windows, crear el entorno dentro de `D:\02_Herramientas\kronos` e instalar `requirements-live.txt` para captura en vivo. La caché de zona horaria de `yfinance` se dirige a `.cache/` del proyecto. Si `py -3.12` ya dispone de las dependencias, se pueden ejecutar directamente estos ejemplos:
+
+```powershell
+# Captura del proveedor, análisis y carpeta nueva bajo resultados/analisis/
+py -3.12 -m options_flow analizar --en-vivo QQQ --max-vencimientos 3 --tasa-anual 0 --dividendo-anual 0
+
+# Comparar con la captura actual de una ejecución anterior
+py -3.12 -m options_flow analizar --en-vivo QQQ --max-vencimientos 3 --anterior-ejecucion D:\ruta\a\ejecucion_previa --tasa-anual 0 --dividendo-anual 0
+
+# Repetir un análisis sin red desde los archivos guardados
+py -3.12 -m options_flow analizar --metadatos D:\ruta\a\ejecucion\actual_metadatos.json --contratos D:\ruta\a\ejecucion\actual_contratos.csv --tasa-anual 0 --dividendo-anual 0
+
+# Incluir el escenario dealer separado de los agregados principales
+py -3.12 -m options_flow analizar --metadatos ejemplos/captura_sintetica_2.json --contratos ejemplos/contratos_sinteticos_2.csv --tasa-anual 0.04 --dividendo-anual 0.01 --escenario-dealer
+```
+
+Los valores `0` de tasa y dividendo de la demostración son **supuestos de prueba**, no parámetros de mercado recomendados. Se debe pasar ambos explícitamente. El resultado principal separa calls y puts por strike y vencimiento. `Delta×OI×M` y `Gamma×OI×M` describen la hipótesis de mantener largos todos los contratos con OI conocido; no muestran posiciones reales. El escenario dealer opcional usa calls cortas y puts largas y se etiqueta como hipótesis.
+
+Cada ejecución crea una carpeta nueva e incluye las entradas originales, `informe.json`, tablas CSV, `manifiesto.json` y huellas SHA-256. El informe conserva además la huella del código de análisis. Repetir con los mismos archivos, supuestos y código genera la misma huella del informe, aunque la carpeta tenga otro identificador. Los archivos bajo `resultados/` no se suben a Git.
+
+`yfinance` aporta el campo de última operación, que se conserva como tal. No aporta una hora verificable para cada bid/ask; esta queda desconocida y la descarga no certifica tiempo real. Para contratos `REGULAR` se supone multiplicador 100; otros tamaños se rechazan hasta verificar el entregable. Esta distinción sigue la [especificación de opciones estándar y ajustadas de OCC](https://www.theocc.com/clearance-and-settlement/clearing/equity-options-product-specifications). La [API de `yfinance`](https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html) se usa para vencimientos y cadenas, sin tratar su resultado como operaciones individuales.
 
 La versión anterior sigue en la rama `quant-platform-v2`. El checkout original y el respaldo local previo al rediseño conservan también los cambios que no estaban en commits.

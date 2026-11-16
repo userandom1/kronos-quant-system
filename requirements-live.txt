@@ -1,0 +1,2 @@
+-r requirements.txt
+yfinance==1.4.1

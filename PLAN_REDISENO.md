@@ -1,6 +1,6 @@
 # Rediseño de Kronos: Options Flow, Delta y Gamma
 
-Estado: contrato de capturas y cálculo Delta/Gamma por contrato implementados; pendiente de revisión antes de agregados.
+Estado: etapas 1–5 implementadas; pendiente de figuras personalizables en Jupyter y validación ampliada.
 Rama de trabajo: `re-design`. El proyecto anterior permanece en `quant-platform-v2` y en el respaldo local previo al rediseño.
 
 ## Producto y forma de uso
@@ -60,10 +60,10 @@ Una operación individual, cuando exista ese dato, tendrá un esquema aparte: id
 | 5. Terminal | Comandos, tablas, errores y archivos de salida | Análisis repetible desde una captura guardada |
 | 6. Jupyter | Figuras parametrizadas con código y salida visible | Cada figura se puede personalizar y regenerar |
 
-La primera revisión será el **contrato de datos**, antes de vaciar los módulos heredados de la nueva rama.
+La base de la nueva rama ya está limpia. El comando analiza archivos JSON/CSV o captura cadenas desde `yfinance`; guarda entradas, tablas, informe y manifiesto en carpetas nuevas. La captura legacy disponible de QQQ no acredita timestamp UTC; su conversión requiere una política histórica explícita. La importación de operaciones individuales sigue pendiente de una fuente que las proporcione.
 
-La primera implementación valida archivos JSON/CSV guardados y deja una muestra sintética reproducible. La captura legacy disponible de QQQ no acredita timestamp UTC; su conversión requiere una política histórica explícita. La importación de operaciones individuales y el cálculo de Greeks siguen pendientes de sus etapas correspondientes.
+Validación técnica del 16 de noviembre de 2026: 20 pruebas offline pasadas. Una captura de QQQ desde el proveedor devolvió 827 contratos en tres vencimientos; 521 tuvieron Delta/Gamma calculables y 306 contratos 0DTE quedaron omitidos por falta de hora exacta de expiración. La hora de cotización de cada bid/ask siguió desconocida. Otra captura permitió comparar estados de volumen; no se identificaron operaciones. Repetir offline un análisis guardado conservó la misma huella SHA-256 del informe. Las ejecuciones de demostración usaron tasa y dividendo 0 como supuestos técnicos, no como parámetros validados de mercado.
 
 ## Límites de la propuesta
 
-El código actual dispone de comparaciones de snapshots, Greeks y exposiciones dealer aproximadas. No dispone de un feed verificado de operaciones individuales. La primera versión podrá trabajar con cadenas y capturas guardadas; el flujo de ejecuciones reales quedará condicionado a disponer de datos adecuados. La calidad de bid/ask y la hora exacta de expiración requieren verificación por fuente.
+La nueva implementación dispone de capturas, comparaciones, Greeks y un escenario dealer opcional. No dispone de un feed verificado de operaciones individuales. La calidad de bid/ask, su hora exacta y la hora de expiración de 0DTE requieren verificación por fuente. El open interest no identifica titulares y su frecuencia de actualización no está verificada.

@@ -205,8 +205,11 @@ def _contrato(fila: dict[str, str], zona_mercado: str) -> tuple[Contrato | None,
 
 def cargar_captura(ruta_metadatos: Path, ruta_csv: Path) -> CapturaValidada:
     """Lee una captura sin modificar originales y conserva cada rechazo."""
-    bytes_metadata = ruta_metadatos.read_bytes()
-    bytes_csv = ruta_csv.read_bytes()
+    return validar_captura_bytes(ruta_metadatos.read_bytes(), ruta_csv.read_bytes())
+
+
+def validar_captura_bytes(bytes_metadata: bytes, bytes_csv: bytes) -> CapturaValidada:
+    """Valida los bytes originales; permite procesar capturas vivas sin ficheros temporales."""
     datos = json.loads(bytes_metadata.decode("utf-8-sig"))
     if not isinstance(datos, dict):
         raise ValueError("metadatos_incorrectos")
@@ -249,6 +252,9 @@ def cargar_captura(ruta_metadatos: Path, ruta_csv: Path) -> CapturaValidada:
                 razones.append("expirado")
             if contrato.cotizacion_utc is not None and contrato.cotizacion_utc > metadatos.capturado_en_utc:
                 razones.append("cotizacion_posterior_a_captura")
+            divisa_contrato = fila.get("divisa_contrato")
+            if divisa_contrato and divisa_contrato.upper() != metadatos.divisa:
+                razones.append("divisa_contrato_incompatible")
         if razones:
             rechazados.append(Rechazo(linea, tuple(dict.fromkeys(razones)), dict(fila)))
         else:
