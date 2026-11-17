@@ -1,0 +1,16 @@
+{
+  "estado_datos": "SINTETICO",
+  "descripcion": "Ejemplo de diseño. Ningún precio ni exposición representa datos de mercado.",
+  "subyacente_precio": "ES",
+  "subyacente_opciones": "SPX",
+  "fuente": "GENERADO_PARA_PRUEBA",
+  "spx_referencia": 5000.0,
+  "es_referencia": 5012.0,
+  "spx_hora_utc": "2026-11-16T20:00:00+00:00",
+  "es_hora_utc": "2026-11-16T20:00:00+00:00",
+  "opciones_observadas_utc": "2026-11-16T20:00:00+00:00",
+  "convencion": "HIPOTESIS_DEALER_CALLS_CORTAS_PUTS_LARGAS",
+  "unidades_gex": "USD de cambio de Delta por 1% de movimiento de SPX",
+  "unidades_dex": "USD nocionales de Delta",
+  "base_es_menos_spx": 12.0
+}

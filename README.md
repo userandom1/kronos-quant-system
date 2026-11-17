@@ -84,3 +84,17 @@ Por ejemplo, cambia `ESTILO["tema"]` a `"dark_background"`, `ESTILO["colores"]["
 También se ha ejecutado localmente el notebook nuevo con una comparación de capturas de QQQ en `resultados/visualizaciones/graficas_utiles_20261116_final/analisis_options_flow.ipynb`: produjo la curva de sensibilidad y omitió las dos figuras de actividad porque no hubo incrementos comparables tras el cierre. Esos resultados locales quedan fuera de Git.
 
 La versión anterior sigue en la rama `quant-platform-v2`. El checkout original y el respaldo local previo al rediseño conservan también los cambios que no estaban en commits.
+
+## Estudio ES con GEX/DEX de SPX
+
+El [notebook ES/SPX](notebooks/es_spx_gex_dex.ipynb) muestra velas de ES y, en el mismo chart con escala de precio compartida, barras horizontales GEX o DEX calculadas a partir de opciones SPX. **El ejemplo incluido es completamente sintético y no es una lectura operativa del mercado.** El verde indica exposición positiva y el rojo negativa bajo el escenario explícito de dealers cortos en calls y largos en puts. La convención no representa posiciones observadas. Con esta convención, DEX puede ser enteramente negativo: no se altera el signo para producir barras verdes.
+
+El cálculo por contrato usa `GEX = signo × gamma × OI × 100 × SPX² × 0,01` (USD de cambio de Delta ante un movimiento del 1% del SPX) y `DEX = signo × delta × OI × 100 × SPX` (USD nocionales). El multiplicador de SPX es [100 según Cboe](https://www.cboe.com/tradable-products/sp-500/spx-options/spx-specifications). Para ubicar cada strike sobre ES, el notebook suma la diferencia `ES_referencia − SPX_referencia` medida con horas que difieran como máximo cinco minutos. Esa alineación es una aproximación, no transforma opciones SPX en opciones ES.
+
+La carpeta elegida en `CARPETA` debe contener `metadatos.json`, `opciones_spx.csv` (`tipo,strike,vencimiento,open_interest,delta,gamma,multiplicador`) y `precio_es.csv` (`hora_utc,open,high,low,close`). El notebook muestra procedencia y huella de los archivos. Los filtros de vencimiento, rango de niveles, tamaño, colores, títulos y exportación siguen visibles. Los valores por strike se consultan en terminal:
+
+```powershell
+py -3.12 -m scripts.resumir_estudio_es ejemplos/estudio_es_spx_demo
+```
+
+El conector actual de Yahoo entregó 1.212 de 1.213 contratos SPX con `ask` inválido y ninguno con Greeks calculables; se rechazó esa captura para el estudio. El conector disponible de Alpha Vantage requiere acceso premium para opciones. No se emplea extracción automática de la página de cotizaciones retrasadas de Cboe, que [la prohíbe expresamente](https://www.cboe.com/delayed_quotes/spx/quote_table/). Para obtener barras reales habrá que conectar un feed autorizado o importar un CSV de opciones SPX con OI, Delta y Gamma verificados y referencias SPX/ES sincronizadas.
